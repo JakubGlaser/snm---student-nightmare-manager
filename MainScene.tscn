@@ -1,0 +1,317 @@
+[gd_scene format=3 uid="uid://cglpd6tq6kgl8"]
+
+[ext_resource type="Texture2D" uid="uid://dt3ia6lvt3k2u" path="res://sprites/teacher spite.png" id="1_teach"]
+[ext_resource type="Texture2D" uid="uid://b3rp2p3crrwdu" path="res://sprites/student sprite.png" id="2_stud1"]
+[ext_resource type="Texture2D" uid="uid://bbuc0rinhcp3v" path="res://sprites/student2  sprite.png" id="3_stud2"]
+[ext_resource type="Texture2D" uid="uid://bekt66x8wtpqc" path="res://sprites/Joke Button (Resized).png" id="4_joke"]
+[ext_resource type="Texture2D" uid="uid://bvjgp65j4t67j" path="res://sprites/Fun fact Button (Resized).png" id="5_fun"]
+[ext_resource type="Texture2D" uid="uid://wyit7lwowagi" path="res://sprites/Question Button 2 (Resized).png" id="6_ques"]
+[ext_resource type="Texture2D" uid="uid://bt6f17g5mg68i" path="res://sprites/Special Button (Resized).png" id="7_spec"]
+[ext_resource type="Script" uid="uid://b5xuyga1a1e6h" path="res://MainScene.gd" id="9_mains"]
+[ext_resource type="Script" uid="uid://cccxgfbwffp63" path="res://JokeMinigame.gd" id="10_jokem"]
+[ext_resource type="Script" uid="uid://8hjtq1jn4vb" path="res://QuestionManager.gd" id="11_quesm"]
+[ext_resource type="Script" uid="uid://66afh4i5dp0m" path="res://Student.gd" id="12_student"]
+
+[node name="MainScene" type="Node2D" unique_id=538928991]
+script = ExtResource("9_mains")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=690210418]
+
+[node name="StaminaPanel" type="Panel" parent="UI" unique_id=1989804626]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 220.0
+offset_bottom = 100.0
+
+[node name="Label" type="Label" parent="UI/StaminaPanel" unique_id=937741568]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 90.0
+offset_bottom = 36.0
+theme_override_font_sizes/font_size = 24
+text = "Stamina"
+
+[node name="Value" type="Label" parent="UI/StaminaPanel" unique_id=304336016]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 45.0
+offset_right = 90.0
+offset_bottom = 73.0
+theme_override_font_sizes/font_size = 20
+text = "7/10"
+
+[node name="ProgressPanel" type="Panel" parent="UI" unique_id=1441470817]
+offset_left = 850.0
+offset_top = 20.0
+offset_right = 1130.0
+offset_bottom = 100.0
+
+[node name="LvlLabel" type="Label" parent="UI/ProgressPanel" unique_id=767760007]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 10.0
+offset_right = 160.0
+offset_bottom = 44.0
+theme_override_font_sizes/font_size = 24
+text = "lvl"
+
+[node name="ProgressBar" type="ProgressBar" parent="UI/ProgressPanel" unique_id=195311488]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 50.0
+offset_right = 260.0
+offset_bottom = 70.0
+value = 50.0
+show_percentage = false
+
+[node name="ProgressLabel" type="Label" parent="UI/ProgressPanel" unique_id=1449641986]
+layout_mode = 0
+offset_left = 90.0
+offset_top = 48.0
+offset_right = 190.0
+offset_bottom = 71.0
+text = "progress"
+horizontal_alignment = 1
+
+[node name="InventoryPanel" type="Panel" parent="UI" unique_id=562815030]
+offset_left = 950.0
+offset_top = 150.0
+offset_right = 1130.0
+offset_bottom = 500.0
+
+[node name="Label" type="Label" parent="UI/InventoryPanel" unique_id=1143023072]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 10.0
+offset_right = 114.0
+offset_bottom = 38.0
+theme_override_font_sizes/font_size = 20
+text = "Invent"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/InventoryPanel" unique_id=2042724075]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 50.0
+offset_right = 165.0
+offset_bottom = 340.0
+theme_override_constants/separation = 5
+
+[node name="Slot1" type="ColorRect" parent="UI/InventoryPanel/VBoxContainer" unique_id=1114746142]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="Slot2" type="ColorRect" parent="UI/InventoryPanel/VBoxContainer" unique_id=1303728029]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="Slot3" type="ColorRect" parent="UI/InventoryPanel/VBoxContainer" unique_id=708106700]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="Slot4" type="ColorRect" parent="UI/InventoryPanel/VBoxContainer" unique_id=743279789]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="Slot5" type="ColorRect" parent="UI/InventoryPanel/VBoxContainer" unique_id=495403977]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="BottomButtons" type="HBoxContainer" parent="UI" unique_id=437184908]
+offset_left = 47.0
+offset_top = 520.0
+offset_right = 1100.0
+offset_bottom = 620.0
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="JokeButton" type="TextureButton" parent="UI/BottomButtons" unique_id=1213038683]
+custom_minimum_size = Vector2(150, 100)
+layout_mode = 2
+texture_normal = ExtResource("4_joke")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="FunFactButton" type="TextureButton" parent="UI/BottomButtons" unique_id=1692395213]
+custom_minimum_size = Vector2(150, 100)
+layout_mode = 2
+texture_normal = ExtResource("5_fun")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="QuestionButton" type="TextureButton" parent="UI/BottomButtons" unique_id=1241243959]
+custom_minimum_size = Vector2(150, 100)
+layout_mode = 2
+texture_normal = ExtResource("6_ques")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SpecialButton" type="TextureButton" parent="UI/BottomButtons" unique_id=1427388681]
+custom_minimum_size = Vector2(150, 100)
+layout_mode = 2
+texture_normal = ExtResource("7_spec")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="JokeMinigamePanel" type="Panel" parent="UI" unique_id=855033325]
+visible = false
+z_index = 100
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -100.0
+offset_right = 300.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("10_jokem")
+
+[node name="InstructionLabel" type="Label" parent="UI/JokeMinigamePanel" unique_id=215579464]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 24
+text = "Press SPACE when the white line is in the green zone!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackgroundBar" type="ColorRect" parent="UI/JokeMinigamePanel" unique_id=1428366056]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_right = 250.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="SweetSpot" type="ColorRect" parent="UI/JokeMinigamePanel/BackgroundBar" unique_id=374441183]
+layout_mode = 0
+offset_left = 200.0
+offset_right = 280.0
+offset_bottom = 40.0
+color = Color(0, 0.8, 0, 1)
+
+[node name="Cursor" type="ColorRect" parent="UI/JokeMinigamePanel/BackgroundBar" unique_id=1711868868]
+layout_mode = 0
+offset_right = 10.0
+offset_bottom = 40.0
+
+[node name="QuestionManager" type="Node2D" parent="UI" unique_id=209413272]
+z_index = 100
+script = ExtResource("11_quesm")
+
+[node name="InstructionLabel" type="Label" parent="UI/QuestionManager" unique_id=616218599]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 241.0
+offset_top = 120.0
+offset_right = 867.0
+offset_bottom = 175.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "Select a group to ask a question!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GroupLeftButton" type="TextureButton" parent="UI/QuestionManager" unique_id=550039255]
+offset_left = 130.0
+offset_top = 220.0
+offset_right = 380.0
+offset_bottom = 500.0
+
+[node name="GroupCenterButton" type="TextureButton" parent="UI/QuestionManager" unique_id=999334281]
+offset_left = 400.0
+offset_top = 220.0
+offset_right = 750.0
+offset_bottom = 500.0
+
+[node name="GroupRightButton" type="TextureButton" parent="UI/QuestionManager" unique_id=1522589690]
+offset_left = 770.0
+offset_top = 220.0
+offset_right = 900.0
+offset_bottom = 500.0
+
+[node name="Characters" type="Node2D" parent="." unique_id=2129204479]
+
+[node name="Teacher" type="Sprite2D" parent="Characters" unique_id=2116616395]
+position = Vector2(573, 39.000008)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_teach")
+
+[node name="Students" type="Node2D" parent="Characters" unique_id=272426769]
+
+[node name="Student1" type="Sprite2D" parent="Characters/Students" unique_id=1846185161]
+position = Vector2(274, 262)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_stud1")
+script = ExtResource("12_student")
+
+[node name="Student2" type="Sprite2D" parent="Characters/Students" unique_id=278711386]
+position = Vector2(549, 281)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_stud2")
+script = ExtResource("12_student")
+
+[node name="Student3" type="Sprite2D" parent="Characters/Students" unique_id=865034165]
+position = Vector2(802, 240)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_stud1")
+script = ExtResource("12_student")
+
+[node name="Student4" type="Sprite2D" parent="Characters/Students" unique_id=488921422]
+position = Vector2(244, 368)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_stud2")
+script = ExtResource("12_student")
+
+[node name="Student5" type="Sprite2D" parent="Characters/Students" unique_id=652384350]
+position = Vector2(590, 325)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_stud1")
+script = ExtResource("12_student")
+
+[node name="Student6" type="Sprite2D" parent="Characters/Students" unique_id=244854477]
+position = Vector2(897, 243)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_stud2")
+offset = Vector2(-290, 210)
+script = ExtResource("12_student")
+
+[node name="Student7" type="Sprite2D" parent="Characters/Students" unique_id=1000445286]
+position = Vector2(149.00002, 350)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_stud1")
+script = ExtResource("12_student")
+
+[node name="Student8" type="Sprite2D" parent="Characters/Students" unique_id=1287793938]
+position = Vector2(198, 288)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_stud2")
+script = ExtResource("12_student")
+
+[node name="Student9" type="Sprite2D" parent="Characters/Students" unique_id=132474642]
+position = Vector2(823, 310)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_stud1")
+script = ExtResource("12_student")
+
+[node name="Student10" type="Sprite2D" parent="Characters/Students" unique_id=1974207841]
+position = Vector2(513, 353)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_stud2")
+script = ExtResource("12_student")
