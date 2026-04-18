@@ -69,7 +69,8 @@ func _on_group_selected(group_name: String):
 			if s.is_active:
 				active_group_students.append(s)
 				if s.has_method("add_bonus_focus"):
-					s.add_bonus_focus(30.0)
+					var bonus = 30.0 * main_scene.action_multiplier
+					s.add_bonus_focus(bonus)
 					
 	if active_group_students.is_empty():
 		end_question()

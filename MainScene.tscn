@@ -11,6 +11,8 @@
 [ext_resource type="Script" uid="uid://cccxgfbwffp63" path="res://JokeMinigame.gd" id="10_jokem"]
 [ext_resource type="Script" uid="uid://8hjtq1jn4vb" path="res://QuestionManager.gd" id="11_quesm"]
 [ext_resource type="Script" uid="uid://66afh4i5dp0m" path="res://Student.gd" id="12_student"]
+[ext_resource type="Script" uid="uid://cpkfuhd1yf5ao" path="res://FunFactMinigame.gd" id="13_funfm"]
+[ext_resource type="Script" path="res://SpecialWheel.gd" id="14_specw"]
 
 [node name="MainScene" type="Node2D" unique_id=538928991]
 script = ExtResource("9_mains")
@@ -245,6 +247,184 @@ offset_left = 770.0
 offset_top = 220.0
 offset_right = 900.0
 offset_bottom = 500.0
+
+[node name="FunFactMinigamePanel" type="Panel" parent="UI"]
+visible = false
+z_index = 100
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -200.0
+offset_right = 350.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("13_funfm")
+
+[node name="TitleLabel" type="Label" parent="UI/FunFactMinigamePanel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 10.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 22
+text = "Pick the most interesting fun fact!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/FunFactMinigamePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 60.0
+offset_right = -20.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="FactButton1" type="Button" parent="UI/FunFactMinigamePanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
+text = "Fact 1"
+autowrap_mode = 2
+
+[node name="FactButton2" type="Button" parent="UI/FunFactMinigamePanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
+text = "Fact 2"
+autowrap_mode = 2
+
+[node name="FactButton3" type="Button" parent="UI/FunFactMinigamePanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
+text = "Fact 3"
+autowrap_mode = 2
+
+[node name="ResultLabel" type="Label" parent="UI/FunFactMinigamePanel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -45.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 18
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SpecialWheelPanel" type="Panel" parent="UI"]
+visible = false
+z_index = 100
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -220.0
+offset_right = 350.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_specw")
+
+[node name="InstructionLabel" type="Label" parent="UI/SpecialWheelPanel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 10.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 26
+text = "Press SPACE to stop the wheel!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OptionsContainer" type="VBoxContainer" parent="UI/SpecialWheelPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 60.0
+offset_right = -30.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="Option1" type="Label" parent="UI/SpecialWheelPanel/OptionsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 18
+text = "Sadluck AI slop"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Option2" type="Label" parent="UI/SpecialWheelPanel/OptionsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 18
+text = "Josef's tobacco"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Option3" type="Label" parent="UI/SpecialWheelPanel/OptionsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 18
+text = "Čeněk's endless speech"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Option4" type="Label" parent="UI/SpecialWheelPanel/OptionsContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 18
+text = "DJ's failed calculation"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResultLabel" type="Label" parent="UI/SpecialWheelPanel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -90.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DescLabel" type="Label" parent="UI/SpecialWheelPanel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Characters" type="Node2D" parent="." unique_id=2129204479]
 

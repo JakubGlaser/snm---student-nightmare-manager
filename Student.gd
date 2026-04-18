@@ -80,6 +80,11 @@ func clear_qte():
 	focus_label.set("theme_override_colors/font_color", Color.WHITE)
 	update_filter()
 
+func set_focus_override(value: float):
+	if not is_active: return
+	focus = value
+	update_filter()
+
 func modify_focus(amount: float):
 	if not is_active:
 		return
