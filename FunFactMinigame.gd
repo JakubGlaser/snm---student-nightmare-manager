@@ -2,6 +2,9 @@ extends Panel
 
 signal funfact_finished(success: bool)
 
+const FACT_OPTION_TEXTURE := preload("res://sprites/Special Ability Option.png")
+const FACT_OPTION_SELECTED_TEXTURE := preload("res://sprites/Special Ability Option Selected.png")
+
 # Each entry: { "fact": "...", "is_fun": true/false }
 # We store them grouped: fun facts and boring facts
 var fun_facts: Array = [
@@ -63,6 +66,9 @@ var boring_facts: Array = [
 @onready var fact_button_1 = $VBoxContainer/FactButton1
 @onready var fact_button_2 = $VBoxContainer/FactButton2
 @onready var fact_button_3 = $VBoxContainer/FactButton3
+@onready var fact_label_1: Label = $VBoxContainer/FactButton1/FactLabel
+@onready var fact_label_2: Label = $VBoxContainer/FactButton2/FactLabel
+@onready var fact_label_3: Label = $VBoxContainer/FactButton3/FactLabel
 @onready var title_label = $TitleLabel
 @onready var result_label = $ResultLabel
 
@@ -81,6 +87,7 @@ func _ready():
 func start_minigame():
 	visible = true
 	result_label.text = ""
+	result_label.remove_theme_color_override("font_color")
 	title_label.text = "Pick the most interesting fun fact!"
 	
 	get_tree().paused = true
@@ -88,9 +95,16 @@ func start_minigame():
 	_generate_choices()
 	
 	var buttons = [fact_button_1, fact_button_2, fact_button_3]
+	var labels = [fact_label_1, fact_label_2, fact_label_3]
 	for i in range(3):
-		buttons[i].text = current_facts[i]["fact"]
+		buttons[i].texture_normal = FACT_OPTION_TEXTURE
+		buttons[i].texture_hover = FACT_OPTION_SELECTED_TEXTURE
+		buttons[i].texture_pressed = FACT_OPTION_SELECTED_TEXTURE
+		buttons[i].modulate = Color.WHITE
 		buttons[i].disabled = false
+		labels[i].modulate = Color.WHITE
+		labels[i].text = current_facts[i]["fact"]
+		_fit_fact_label(labels[i], labels[i].text)
 
 func _get_unused_fun_fact() -> String:
 	# Reset pool if exhausted
@@ -153,11 +167,14 @@ func _on_fact_chosen(index: int):
 	
 	# Highlight the correct answer
 	var buttons = [fact_button_1, fact_button_2, fact_button_3]
+	var labels = [fact_label_1, fact_label_2, fact_label_3]
 	for i in range(3):
 		if current_facts[i]["is_fun"]:
-			buttons[i].add_theme_color_override("font_color", Color.GREEN)
+			buttons[i].texture_normal = FACT_OPTION_SELECTED_TEXTURE
+			labels[i].add_theme_color_override("font_color", Color(0.45, 1.0, 0.45))
 		else:
-			buttons[i].add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+			buttons[i].modulate = Color(0.55, 0.55, 0.55)
+			labels[i].add_theme_color_override("font_color", Color(0.72, 0.72, 0.72))
 	
 	if success:
 		result_label.text = "Great pick! Students are engaged! (+15% Focus)"
@@ -173,9 +190,27 @@ func _on_fact_chosen(index: int):
 func _on_result_timeout(success: bool):
 	# Reset button colors
 	var buttons = [fact_button_1, fact_button_2, fact_button_3]
-	for b in buttons:
-		b.remove_theme_color_override("font_color")
+	var labels = [fact_label_1, fact_label_2, fact_label_3]
+	for i in range(3):
+		buttons[i].texture_normal = FACT_OPTION_TEXTURE
+		buttons[i].modulate = Color.WHITE
+		labels[i].remove_theme_color_override("font_color")
 	
 	visible = false
 	get_tree().paused = false
 	funfact_finished.emit(success)
+
+func _fit_fact_label(label: Label, text: String):
+	var font_size := 15
+	if text.length() > 118:
+		font_size = 10
+	elif text.length() > 105:
+		font_size = 11
+	elif text.length() > 82:
+		font_size = 12
+	elif text.length() > 62:
+		font_size = 13
+	elif text.length() > 46:
+		font_size = 14
+	
+	label.add_theme_font_size_override("font_size", font_size)

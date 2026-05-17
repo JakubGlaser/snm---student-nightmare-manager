@@ -4,7 +4,8 @@ signal joke_finished(success: bool)
 
 # Minigame settings
 @export var cursor_speed: float = 600.0
-@export var sweet_spot_width: float = 80.0
+@export var sweet_spot_min_width: float = 70.0
+@export var sweet_spot_max_width: float = 135.0
 
 @onready var background_bar = $BackgroundBar
 @onready var sweet_spot = $BackgroundBar/SweetSpot
@@ -14,6 +15,7 @@ signal joke_finished(success: bool)
 var is_playing: bool = false
 var cursor_direction: int = 1
 var bar_width: float = 0.0
+var sweet_spot_tween: Tween
 
 func _ready():
 	visible = false
@@ -30,19 +32,28 @@ func start_minigame():
 	bar_width = background_bar.size.x
 	
 	# Setup SweetSpot
-	sweet_spot.size.x = sweet_spot_width
-	sweet_spot.size.y = background_bar.size.y
-	# Randomize sweet spot position along the bar
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
+	var sweet_spot_width = rng.randf_range(sweet_spot_min_width, sweet_spot_max_width)
 	var min_x = 0.0
 	var max_x = bar_width - sweet_spot_width
-	sweet_spot.position.x = rng.randf_range(min_x, max_x)
+	var target_x = rng.randf_range(min_x, max_x)
+	
+	if sweet_spot_tween:
+		sweet_spot_tween.kill()
+	
 	sweet_spot.position.y = 0
+	sweet_spot.size.y = background_bar.size.y
+	sweet_spot_tween = create_tween()
+	sweet_spot_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	sweet_spot_tween.set_parallel(true)
+	sweet_spot_tween.tween_property(sweet_spot, "position:x", target_x, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	sweet_spot_tween.tween_property(sweet_spot, "size:x", sweet_spot_width, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	
 	# Reset cursor
 	cursor.position.x = 0
 	cursor.position.y = 0
+	cursor.size.x = 8
 	cursor.size.y = background_bar.size.y
 	cursor_direction = 1
 	instruction_label.text = "Press SPACE when the white line is in the green zone!"
@@ -86,7 +97,7 @@ func check_win_condition():
 		instruction_label.text = "MISSED! (-10% Focus)"
 		
 	# Wait a short moment so the player sees the result, then end
-	var timer = get_tree().create_timer(1.0)
+	var timer = get_tree().create_timer(1.0, true)
 	# Because we are paused and process_mode is ALWAYS on this node, we can bind to timeout without issue
 	timer.timeout.connect(_on_result_timeout.bind(success))
 

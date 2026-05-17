@@ -1,10 +1,27 @@
 extends Node2D
 
+const SOUND_ON_ICON := preload("res://sprites/Sound On Icon.png")
+const SOUND_OFF_ICON := preload("res://sprites/Sound Off Icon.png")
+const MUSIC_ON_ICON := preload("res://sprites/Music On Icon.png")
+const MUSIC_OFF_ICON := preload("res://sprites/Music Off Icon.png")
+
 @export var level_duration: float = 120.0 # 2 minutes in seconds
 var current_time: float = 0.0
 
 @onready var progress_bar: ProgressBar = $UI/ProgressPanel/ProgressBar
 @onready var stamina_value_label: Label = $UI/StaminaPanel/Value
+@onready var menu_button: TextureButton = $UI/StaminaPanel
+@onready var menu_input_blocker: ColorRect = $MenuLayer/MenuInputBlocker
+@onready var menu_panel: Panel = $MenuLayer/MenuPanel
+@onready var menu_continue_button: TextureButton = $MenuLayer/MenuPanel/OptionsContainer/ContinueButton
+@onready var menu_new_game_button: TextureButton = $MenuLayer/MenuPanel/OptionsContainer/NewGameButton
+@onready var menu_tutorial_button: TextureButton = $MenuLayer/MenuPanel/OptionsContainer/TutorialButton
+@onready var menu_credits_button: TextureButton = $MenuLayer/MenuPanel/OptionsContainer/CreditsButton
+@onready var menu_main_menu_button: TextureButton = $MenuLayer/MenuPanel/OptionsContainer/MainMenuButton
+@onready var sound_toggle_button: TextureButton = $MenuLayer/MenuPanel/AudioToggles/SoundToggleButton
+@onready var music_toggle_button: TextureButton = $MenuLayer/MenuPanel/AudioToggles/MusicToggleButton
+@onready var sound_toggle_icon: TextureRect = $MenuLayer/MenuPanel/AudioToggles/SoundToggleButton/SoundToggleIcon
+@onready var music_toggle_icon: TextureRect = $MenuLayer/MenuPanel/AudioToggles/MusicToggleButton/MusicToggleIcon
 @onready var students_node = $Characters/Students
 @onready var joke_minigame_panel = $UI/JokeMinigamePanel
 @onready var joke_button = $UI/BottomButtons/JokeButton
@@ -20,6 +37,11 @@ var current_time: float = 0.0
 var total_students: int = 0
 var alive_students: int = 0
 var current_level: int = 1
+var displayed_progress_time: float = 0.0
+var sound_enabled: bool = true
+var music_enabled: bool = true
+var was_paused_before_menu: bool = false
+var bottom_button_disabled_states: Dictionary = {}
 
 var joke_cooldown_label: Label
 var joke_cooldown: float = 30.0
@@ -37,9 +59,25 @@ var dj_next_level_bonus: bool = false
 var action_multiplier: float = 1.0
 
 func _ready():
+	menu_button.process_mode = Node.PROCESS_MODE_ALWAYS
+	menu_input_blocker.process_mode = Node.PROCESS_MODE_ALWAYS
+	menu_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+	sound_toggle_button.process_mode = Node.PROCESS_MODE_ALWAYS
+	music_toggle_button.process_mode = Node.PROCESS_MODE_ALWAYS
+	menu_button.pressed.connect(_on_menu_button_pressed)
+	menu_continue_button.pressed.connect(_close_menu)
+	menu_new_game_button.pressed.connect(_on_menu_new_game_pressed)
+	menu_tutorial_button.pressed.connect(_on_menu_tutorial_pressed)
+	menu_credits_button.pressed.connect(_on_menu_credits_pressed)
+	menu_main_menu_button.pressed.connect(_on_menu_main_menu_pressed)
+	sound_toggle_button.pressed.connect(_on_sound_toggle_pressed)
+	music_toggle_button.pressed.connect(_on_music_toggle_pressed)
+	_update_audio_toggle_icons()
+	
 	progress_bar.min_value = 0
 	progress_bar.max_value = level_duration
 	progress_bar.value = 0
+	displayed_progress_time = 0.0
 	
 	total_students = students_node.get_child_count()
 	alive_students = total_students
@@ -87,9 +125,11 @@ func _ready():
 func _process(delta: float):
 	if current_time < level_duration:
 		current_time += delta
-		progress_bar.value = current_time
+		displayed_progress_time = lerp(displayed_progress_time, current_time, min(delta * 8.0, 1.0))
+		progress_bar.value = displayed_progress_time
 		
 		if current_time >= level_duration:
+			progress_bar.value = level_duration
 			level_complete()
 			
 	if current_joke_cooldown > 0:
@@ -111,7 +151,76 @@ func _process(delta: float):
 			funfact_cooldown_label.text = ""
 
 func _is_any_minigame_open() -> bool:
-	return joke_minigame_panel.visible or funfact_minigame_panel.visible or special_wheel_panel.visible or question_manager.is_selecting or question_manager.is_qte_active
+	return menu_panel.visible or joke_minigame_panel.visible or funfact_minigame_panel.visible or special_wheel_panel.visible or question_manager.is_selecting or question_manager.is_qte_active
+
+func _on_menu_button_pressed():
+	if menu_panel.visible:
+		_close_menu()
+	else:
+		was_paused_before_menu = get_tree().paused
+		menu_input_blocker.visible = true
+		menu_panel.visible = true
+		_set_gameplay_buttons_blocked(true)
+		get_tree().paused = true
+
+func _close_menu():
+	menu_panel.visible = false
+	menu_input_blocker.visible = false
+	_set_gameplay_buttons_blocked(false)
+	get_tree().paused = was_paused_before_menu
+
+func _on_menu_new_game_pressed():
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+func _on_menu_tutorial_pressed():
+	print("Tutorial menu option selected. Tutorial screen can be connected here later.")
+
+func _on_menu_credits_pressed():
+	print("Credits menu option selected. Credits screen can be connected here later.")
+
+func _on_menu_main_menu_pressed():
+	menu_panel.visible = false
+	menu_input_blocker.visible = false
+	_set_gameplay_buttons_blocked(false)
+	get_tree().paused = false
+	print("Main Menu option selected. Main menu scene can be connected here later.")
+
+func _set_gameplay_buttons_blocked(blocked: bool):
+	var buttons = [joke_button, funfact_button, question_button, special_button]
+	if blocked:
+		bottom_button_disabled_states.clear()
+		for button in buttons:
+			bottom_button_disabled_states[button] = button.disabled
+			button.disabled = true
+	else:
+		for button in buttons:
+			if bottom_button_disabled_states.has(button):
+				button.disabled = bottom_button_disabled_states[button]
+		bottom_button_disabled_states.clear()
+
+func _on_sound_toggle_pressed():
+	sound_enabled = not sound_enabled
+	_set_audio_bus_mute("SFX", not sound_enabled)
+	_update_audio_toggle_icons()
+	print("Sound ", "ON" if sound_enabled else "OFF")
+
+func _on_music_toggle_pressed():
+	music_enabled = not music_enabled
+	_set_audio_bus_mute("Music", not music_enabled)
+	_update_audio_toggle_icons()
+	print("Music ", "ON" if music_enabled else "OFF")
+
+func _update_audio_toggle_icons():
+	sound_toggle_icon.texture = SOUND_ON_ICON if sound_enabled else SOUND_OFF_ICON
+	music_toggle_icon.texture = MUSIC_ON_ICON if music_enabled else MUSIC_OFF_ICON
+
+func _set_audio_bus_mute(bus_name: String, muted: bool):
+	var bus_index = AudioServer.get_bus_index(bus_name)
+	if bus_index == -1:
+		print(bus_name, " audio bus is not set up yet.")
+		return
+	AudioServer.set_bus_mute(bus_index, muted)
 
 func start_new_level():
 	lvl_label.text = "lvl " + str(current_level)
@@ -156,6 +265,7 @@ func level_complete():
 	
 	current_level += 1
 	current_time = 0.0
+	displayed_progress_time = 0.0
 	progress_bar.value = 0.0
 	start_new_level()
 
@@ -199,25 +309,25 @@ func _on_funfact_minigame_finished(success: bool):
 		if student.has_method("modify_focus"):
 			student.modify_focus(effect)
 
-func _on_wheel_finished(result: String):
+func _on_wheel_finished(result_id: String):
 	# Mark special as used for this level
 	special_used_this_level = true
 	special_button.disabled = true
 	special_button.modulate = Color(0.5, 0.5, 0.5)
 	
-	match result:
-		"Sadluck AI slop":
+	match result_id:
+		"sadluck_ai_slop":
 			# Give everyone 120% focus instantly
 			for student in students_node.get_children():
 				if student.has_method("set_focus_override"):
 					student.set_focus_override(120.0)
 		
-		"Josef's tobacco":
+		"josefs_tobacco":
 			# Double all action effectiveness for this level
 			josef_active = true
 			action_multiplier = 2.0
 		
-		"Čeněk's endless speech":
+		"ceneks_endless_speech":
 			# Freeze all focus decay + speed up time 4x
 			cenek_active = true
 			for student in students_node.get_children():
@@ -225,7 +335,7 @@ func _on_wheel_finished(result: String):
 					student.set_decay_paused(true)
 			Engine.time_scale = 4.0
 		
-		"DJ's failed calculation":
+		"djs_failed_calculation":
 			# Everyone loses 20 focus now
 			for student in students_node.get_children():
 				if student.has_method("modify_focus"):

@@ -12,20 +12,74 @@
 [ext_resource type="Script" uid="uid://8hjtq1jn4vb" path="res://QuestionManager.gd" id="11_quesm"]
 [ext_resource type="Script" uid="uid://66afh4i5dp0m" path="res://Student.gd" id="12_student"]
 [ext_resource type="Script" uid="uid://cpkfuhd1yf5ao" path="res://FunFactMinigame.gd" id="13_funfm"]
-[ext_resource type="Script" path="res://SpecialWheel.gd" id="14_specw"]
+[ext_resource type="Script" uid="uid://cnyktnawtwhod" path="res://SpecialWheel.gd" id="14_specw"]
+[ext_resource type="Texture2D" uid="uid://gsav7htsf0ts" path="res://sprites/Joke Button Pressed.png" id="15_jokep"]
+[ext_resource type="Texture2D" uid="uid://d1kewunursf2h" path="res://sprites/Fun fact Button Pressed.png" id="16_funp"]
+[ext_resource type="Texture2D" uid="uid://s8u4qryx5dfn" path="res://sprites/Question Button Pressed.png" id="17_quesp"]
+[ext_resource type="Texture2D" uid="uid://b87yeroso4q7y" path="res://sprites/Special Button Pressed.png" id="18_specp"]
+[ext_resource type="Texture2D" uid="uid://dbvrq6xvekh0d" path="res://sprites/Level Progress UI.png" id="19_levelui"]
+[ext_resource type="Texture2D" uid="uid://gisw1dugbg4q" path="res://sprites/Inventory UI.png" id="20_inventoryui"]
+[ext_resource type="Texture2D" uid="uid://dqn35135mqm8o" path="res://sprites/Special Ability Panel.png" id="21_specialpanel"]
+[ext_resource type="Texture2D" uid="uid://brj301su3qn81" path="res://sprites/Special Ability Option.png" id="22_factoption"]
+[ext_resource type="Texture2D" uid="uid://cy0gcexasau28" path="res://sprites/Special Ability Option Selected.png" id="23_factoption_selected"]
+[ext_resource type="Texture2D" uid="uid://b20ombync7ixp" path="res://sprites/Joke Timing Bar.png" id="24_jokebar"]
+[ext_resource type="Texture2D" uid="uid://borkvfh0344a0" path="res://sprites/Sound On Icon.png" id="25_sound_on"]
+[ext_resource type="Texture2D" uid="uid://bpccvg78ye3vn" path="res://sprites/Music On Icon.png" id="27_music_on"]
+[ext_resource type="Texture2D" uid="uid://ce3f1236516cf" path="res://sprites/Audio Toggle Hitbox.png" id="29_audio_hitbox"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_special_panel"]
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_fill"]
+bg_color = Color(1, 0.77, 0.04, 1)
+corner_radius_top_left = 13
+corner_radius_top_right = 13
+corner_radius_bottom_right = 13
+corner_radius_bottom_left = 13
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joke_sweet_spot"]
+bg_color = Color(0, 0.86, 0.04, 0.88)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.27, 1, 0.2, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joke_cursor"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="MainScene" type="Node2D" unique_id=538928991]
 script = ExtResource("9_mains")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=690210418]
 
-[node name="StaminaPanel" type="Panel" parent="UI" unique_id=1989804626]
+[node name="MenuLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="StaminaPanel" type="TextureButton" parent="UI" unique_id=1989804626]
 offset_left = 20.0
 offset_top = 20.0
-offset_right = 220.0
-offset_bottom = 100.0
+offset_right = 190.0
+offset_bottom = 78.0
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="Label" type="Label" parent="UI/StaminaPanel" unique_id=937741568]
+visible = false
 layout_mode = 0
 offset_left = 10.0
 offset_top = 10.0
@@ -35,6 +89,7 @@ theme_override_font_sizes/font_size = 24
 text = "Stamina"
 
 [node name="Value" type="Label" parent="UI/StaminaPanel" unique_id=304336016]
+visible = false
 layout_mode = 0
 offset_left = 10.0
 offset_top = 45.0
@@ -43,31 +98,331 @@ offset_bottom = 73.0
 theme_override_font_sizes/font_size = 20
 text = "7/10"
 
-[node name="ProgressPanel" type="Panel" parent="UI" unique_id=1441470817]
-offset_left = 850.0
-offset_top = 20.0
+[node name="MenuText" type="Label" parent="UI/StaminaPanel" unique_id=1855134250]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 22.0
+offset_top = 10.0
+offset_right = -22.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 7
+theme_override_font_sizes/font_size = 26
+text = "MENU"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MenuInputBlocker" type="ColorRect" parent="MenuLayer" unique_id=1834586010]
+visible = false
+z_index = 249
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0)
+
+[node name="MenuPanel" type="Panel" parent="MenuLayer" unique_id=60460820]
+visible = false
+z_index = 250
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -300.0
+offset_right = 360.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_special_panel")
+
+[node name="Background" type="TextureRect" parent="MenuLayer/MenuPanel" unique_id=347904092]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+texture = ExtResource("21_specialpanel")
+expand_mode = 1
+
+[node name="OptionsContainer" type="VBoxContainer" parent="MenuLayer/MenuPanel" unique_id=889124941]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 220.0
+offset_top = 50.0
+offset_right = -220.0
+offset_bottom = -155.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 9
+
+[node name="ContinueButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=1700439022]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/ContinueButton" unique_id=1415989405]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 8.0
+offset_right = -36.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "Continue"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NewGameButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=1039908872]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/NewGameButton" unique_id=5138067]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 8.0
+offset_right = -36.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "New game"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TutorialButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=837719486]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/TutorialButton" unique_id=197936743]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 8.0
+offset_right = -36.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "Tutorial"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CreditsButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=731506261]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/CreditsButton" unique_id=975178395]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 8.0
+offset_right = -36.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "Credits"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainMenuButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=1254354281]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/MainMenuButton" unique_id=1296188322]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 8.0
+offset_right = -36.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "Main Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AudioToggles" type="HBoxContainer" parent="MenuLayer/MenuPanel" unique_id=589887345]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 205.0
+offset_top = -155.0
+offset_right = -205.0
+offset_bottom = -35.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 48
+alignment = 1
+
+[node name="SoundToggleButton" type="TextureButton" parent="MenuLayer/MenuPanel/AudioToggles" unique_id=1389905376]
+custom_minimum_size = Vector2(112, 112)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("29_audio_hitbox")
+texture_pressed = ExtResource("29_audio_hitbox")
+texture_hover = ExtResource("29_audio_hitbox")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SoundToggleIcon" type="TextureRect" parent="MenuLayer/MenuPanel/AudioToggles/SoundToggleButton" unique_id=205350513]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.61800003
+anchor_right = 0.5
+anchor_bottom = 0.61800003
+offset_left = -45.0
+offset_top = -58.216003
+offset_right = 45.0
+offset_bottom = 31.783997
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("25_sound_on")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MusicToggleButton" type="TextureButton" parent="MenuLayer/MenuPanel/AudioToggles" unique_id=881549424]
+custom_minimum_size = Vector2(112, 112)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("29_audio_hitbox")
+texture_pressed = ExtResource("29_audio_hitbox")
+texture_hover = ExtResource("29_audio_hitbox")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="MusicToggleIcon" type="TextureRect" parent="MenuLayer/MenuPanel/AudioToggles/MusicToggleButton" unique_id=495666895]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.625
+anchor_right = 0.5
+anchor_bottom = 0.625
+offset_left = -45.0
+offset_top = -59.0
+offset_right = 45.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("27_music_on")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ProgressPanel" type="TextureRect" parent="UI" unique_id=1441470817]
+offset_left = 810.0
+offset_top = 10.0
 offset_right = 1130.0
-offset_bottom = 100.0
+offset_bottom = 170.0
+texture = ExtResource("19_levelui")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="LvlLabel" type="Label" parent="UI/ProgressPanel" unique_id=767760007]
 layout_mode = 0
-offset_left = 120.0
-offset_top = 10.0
-offset_right = 160.0
-offset_bottom = 44.0
-theme_override_font_sizes/font_size = 24
+offset_left = 100.0
+offset_top = 33.0
+offset_right = 220.0
+offset_bottom = 72.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 22
 text = "lvl"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="UI/ProgressPanel" unique_id=195311488]
 layout_mode = 0
-offset_left = 20.0
-offset_top = 50.0
-offset_right = 260.0
-offset_bottom = 70.0
+offset_left = 28.0
+offset_top = 78.0
+offset_right = 292.0
+offset_bottom = 103.0
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
 value = 50.0
 show_percentage = false
 
 [node name="ProgressLabel" type="Label" parent="UI/ProgressPanel" unique_id=1449641986]
+visible = false
 layout_mode = 0
 offset_left = 90.0
 offset_top = 48.0
@@ -76,13 +431,17 @@ offset_bottom = 71.0
 text = "progress"
 horizontal_alignment = 1
 
-[node name="InventoryPanel" type="Panel" parent="UI" unique_id=562815030]
-offset_left = 950.0
-offset_top = 150.0
+[node name="InventoryPanel" type="TextureRect" parent="UI" unique_id=562815030]
+offset_left = 910.0
+offset_top = 165.0
 offset_right = 1130.0
-offset_bottom = 500.0
+offset_bottom = 495.0
+texture = ExtResource("20_inventoryui")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Label" type="Label" parent="UI/InventoryPanel" unique_id=1143023072]
+visible = false
 layout_mode = 0
 offset_left = 50.0
 offset_top = 10.0
@@ -92,6 +451,7 @@ theme_override_font_sizes/font_size = 20
 text = "Invent"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/InventoryPanel" unique_id=2042724075]
+visible = false
 layout_mode = 0
 offset_left = 15.0
 offset_top = 50.0
@@ -133,30 +493,34 @@ theme_override_constants/separation = 40
 alignment = 1
 
 [node name="JokeButton" type="TextureButton" parent="UI/BottomButtons" unique_id=1213038683]
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(220, 100)
 layout_mode = 2
 texture_normal = ExtResource("4_joke")
+texture_pressed = ExtResource("15_jokep")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="FunFactButton" type="TextureButton" parent="UI/BottomButtons" unique_id=1692395213]
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(220, 100)
 layout_mode = 2
 texture_normal = ExtResource("5_fun")
+texture_pressed = ExtResource("16_funp")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="QuestionButton" type="TextureButton" parent="UI/BottomButtons" unique_id=1241243959]
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(220, 100)
 layout_mode = 2
 texture_normal = ExtResource("6_ques")
+texture_pressed = ExtResource("17_quesp")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="SpecialButton" type="TextureButton" parent="UI/BottomButtons" unique_id=1427388681]
-custom_minimum_size = Vector2(150, 100)
+custom_minimum_size = Vector2(220, 100)
 layout_mode = 2
 texture_normal = ExtResource("7_spec")
+texture_pressed = ExtResource("18_specp")
 ignore_texture_size = true
 stretch_mode = 5
 
@@ -168,24 +532,59 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -100.0
-offset_right = 300.0
-offset_bottom = 100.0
+offset_left = -380.0
+offset_top = -215.0
+offset_right = 380.0
+offset_bottom = 215.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_special_panel")
 script = ExtResource("10_jokem")
+
+[node name="Background" type="TextureRect" parent="UI/JokeMinigamePanel" unique_id=1051637475]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("21_specialpanel")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="InstructionLabel" type="Label" parent="UI/JokeMinigamePanel" unique_id=215579464]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 50.0
+offset_left = 64.0
+offset_top = 78.0
+offset_right = -64.0
+offset_bottom = 136.0
 grow_horizontal = 2
-theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 22
 text = "Press SPACE when the white line is in the green zone!"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="BarFrame" type="TextureRect" parent="UI/JokeMinigamePanel" unique_id=1886667380]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -330.0
+offset_top = 20.0
+offset_right = 330.0
+offset_bottom = 123.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("24_jokebar")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="BackgroundBar" type="ColorRect" parent="UI/JokeMinigamePanel" unique_id=1428366056]
 layout_mode = 1
@@ -194,24 +593,26 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -250.0
-offset_right = 250.0
-offset_bottom = 40.0
+offset_left = -286.0
+offset_top = 53.0
+offset_right = 286.0
+offset_bottom = 90.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.2, 0.2, 0.2, 1)
+color = Color(0, 0, 0, 0)
 
-[node name="SweetSpot" type="ColorRect" parent="UI/JokeMinigamePanel/BackgroundBar" unique_id=374441183]
+[node name="SweetSpot" type="Panel" parent="UI/JokeMinigamePanel/BackgroundBar" unique_id=374441183]
 layout_mode = 0
 offset_left = 200.0
 offset_right = 280.0
-offset_bottom = 40.0
-color = Color(0, 0.8, 0, 1)
+offset_bottom = 34.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_joke_sweet_spot")
 
-[node name="Cursor" type="ColorRect" parent="UI/JokeMinigamePanel/BackgroundBar" unique_id=1711868868]
+[node name="Cursor" type="Panel" parent="UI/JokeMinigamePanel/BackgroundBar" unique_id=1711868868]
 layout_mode = 0
 offset_right = 10.0
-offset_bottom = 40.0
+offset_bottom = 34.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_joke_cursor")
 
 [node name="QuestionManager" type="Node2D" parent="UI" unique_id=209413272]
 z_index = 100
@@ -231,7 +632,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="GroupLeftButton" type="TextureButton" parent="UI/QuestionManager" unique_id=550039255]
-offset_left = 130.0
+offset_left = 99.0
 offset_top = 220.0
 offset_right = 380.0
 offset_bottom = 500.0
@@ -248,7 +649,7 @@ offset_top = 220.0
 offset_right = 900.0
 offset_bottom = 500.0
 
-[node name="FunFactMinigamePanel" type="Panel" parent="UI"]
+[node name="FunFactMinigamePanel" type="Panel" parent="UI" unique_id=355310120]
 visible = false
 z_index = 100
 anchors_preset = 8
@@ -256,75 +657,167 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -350.0
-offset_top = -200.0
-offset_right = 350.0
-offset_bottom = 200.0
+offset_left = -380.0
+offset_top = -215.0
+offset_right = 380.0
+offset_bottom = 215.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_special_panel")
 script = ExtResource("13_funfm")
 
-[node name="TitleLabel" type="Label" parent="UI/FunFactMinigamePanel"]
+[node name="Background" type="TextureRect" parent="UI/FunFactMinigamePanel" unique_id=2075869554]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("21_specialpanel")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="UI/FunFactMinigamePanel" unique_id=42795547]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 10.0
-offset_bottom = 50.0
+offset_left = 70.0
+offset_top = 40.0
+offset_right = -70.0
+offset_bottom = 96.0
 grow_horizontal = 2
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 34
 text = "Pick the most interesting fun fact!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/FunFactMinigamePanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/FunFactMinigamePanel" unique_id=1349272732]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
-offset_top = 60.0
+offset_top = 118.0
 offset_right = -20.0
-offset_bottom = -50.0
+offset_bottom = -82.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
-[node name="FactButton1" type="Button" parent="UI/FunFactMinigamePanel/VBoxContainer"]
+[node name="FactButton1" type="TextureButton" parent="UI/FunFactMinigamePanel/VBoxContainer" unique_id=1029706645]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 14
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="FactLabel" type="Label" parent="UI/FunFactMinigamePanel/VBoxContainer/FactButton1" unique_id=700741840]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 52.0
+offset_top = 18.0
+offset_right = -52.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
 text = "Fact 1"
-autowrap_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
 
-[node name="FactButton2" type="Button" parent="UI/FunFactMinigamePanel/VBoxContainer"]
+[node name="FactButton2" type="TextureButton" parent="UI/FunFactMinigamePanel/VBoxContainer" unique_id=1218734082]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 14
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="FactLabel" type="Label" parent="UI/FunFactMinigamePanel/VBoxContainer/FactButton2" unique_id=1124895220]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 52.0
+offset_top = 18.0
+offset_right = -52.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
 text = "Fact 2"
-autowrap_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
 
-[node name="FactButton3" type="Button" parent="UI/FunFactMinigamePanel/VBoxContainer"]
+[node name="FactButton3" type="TextureButton" parent="UI/FunFactMinigamePanel/VBoxContainer" unique_id=532760455]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 14
-text = "Fact 3"
-autowrap_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
 
-[node name="ResultLabel" type="Label" parent="UI/FunFactMinigamePanel"]
+[node name="FactLabel" type="Label" parent="UI/FunFactMinigamePanel/VBoxContainer/FactButton3" unique_id=783566433]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 52.0
+offset_top = 18.0
+offset_right = -52.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "Fact 3"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="ResultLabel" type="Label" parent="UI/FunFactMinigamePanel" unique_id=1867645146]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -45.0
+offset_left = 70.0
+offset_top = -76.0
+offset_right = -70.0
+offset_bottom = -38.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 18
-text = ""
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 3
 
-[node name="SpecialWheelPanel" type="Panel" parent="UI"]
+[node name="SpecialWheelPanel" type="Panel" parent="UI" unique_id=1800125044]
 visible = false
 z_index = 100
 anchors_preset = 8
@@ -332,97 +825,96 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -350.0
-offset_top = -220.0
-offset_right = 350.0
-offset_bottom = 220.0
+offset_left = -380.0
+offset_top = -215.0
+offset_right = 380.0
+offset_bottom = 215.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_special_panel")
 script = ExtResource("14_specw")
 
-[node name="InstructionLabel" type="Label" parent="UI/SpecialWheelPanel"]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 10.0
-offset_bottom = 50.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 26
-text = "Press SPACE to stop the wheel!"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="OptionsContainer" type="VBoxContainer" parent="UI/SpecialWheelPanel"]
+[node name="Background" type="TextureRect" parent="UI/SpecialWheelPanel" unique_id=2134253116]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 30.0
-offset_top = 60.0
-offset_right = -30.0
-offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 8
+texture = ExtResource("21_specialpanel")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="Option1" type="Label" parent="UI/SpecialWheelPanel/OptionsContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
-text = "Sadluck AI slop"
+[node name="InstructionLabel" type="Label" parent="UI/SpecialWheelPanel" unique_id=1345737320]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 70.0
+offset_top = 40.0
+offset_right = -70.0
+offset_bottom = 96.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 36
+text = "Press SPACE to stop the wheel!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Option2" type="Label" parent="UI/SpecialWheelPanel/OptionsContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
-text = "Josef's tobacco"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="OptionsScroll" type="ScrollContainer" parent="UI/SpecialWheelPanel" unique_id=522936261]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 80.0
+offset_top = 118.0
+offset_right = -80.0
+offset_bottom = -150.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
 
-[node name="Option3" type="Label" parent="UI/SpecialWheelPanel/OptionsContainer"]
+[node name="OptionsContainer" type="VBoxContainer" parent="UI/SpecialWheelPanel/OptionsScroll" unique_id=845950233]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
-text = "Čeněk's endless speech"
-horizontal_alignment = 1
-vertical_alignment = 1
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
 
-[node name="Option4" type="Label" parent="UI/SpecialWheelPanel/OptionsContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 18
-text = "DJ's failed calculation"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ResultLabel" type="Label" parent="UI/SpecialWheelPanel"]
+[node name="ResultLabel" type="Label" parent="UI/SpecialWheelPanel" unique_id=629844468]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -90.0
-offset_bottom = -50.0
+offset_left = 70.0
+offset_top = -132.0
+offset_right = -70.0
+offset_bottom = -90.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 22
-text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DescLabel" type="Label" parent="UI/SpecialWheelPanel"]
+[node name="DescLabel" type="Label" parent="UI/SpecialWheelPanel" unique_id=120364321]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -50.0
+offset_left = 70.0
+offset_top = -91.0
+offset_right = -70.0
+offset_bottom = -42.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 16
-text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
 
