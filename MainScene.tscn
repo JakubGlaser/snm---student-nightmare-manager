@@ -27,9 +27,6 @@
 [ext_resource type="Texture2D" uid="uid://bpccvg78ye3vn" path="res://sprites/Music On Icon.png" id="27_music_on"]
 [ext_resource type="Texture2D" uid="uid://ce3f1236516cf" path="res://sprites/Audio Toggle Hitbox.png" id="29_audio_hitbox"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_special_panel"]
-bg_color = Color(0, 0, 0, 0)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
 bg_color = Color(0, 0, 0, 0)
 
@@ -39,6 +36,9 @@ corner_radius_top_left = 13
 corner_radius_top_right = 13
 corner_radius_bottom_right = 13
 corner_radius_bottom_left = 13
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_special_panel"]
+bg_color = Color(0, 0, 0, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joke_sweet_spot"]
 bg_color = Color(0, 0.86, 0.04, 0.88)
@@ -63,9 +63,6 @@ corner_radius_bottom_left = 4
 script = ExtResource("9_mains")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=690210418]
-
-[node name="MenuLayer" type="CanvasLayer" parent="."]
-layer = 10
 
 [node name="StaminaPanel" type="TextureButton" parent="UI" unique_id=1989804626]
 offset_left = 20.0
@@ -116,276 +113,6 @@ theme_override_font_sizes/font_size = 26
 text = "MENU"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="MenuInputBlocker" type="ColorRect" parent="MenuLayer" unique_id=1834586010]
-visible = false
-z_index = 249
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 0
-color = Color(0, 0, 0, 0)
-
-[node name="MenuPanel" type="Panel" parent="MenuLayer" unique_id=60460820]
-visible = false
-z_index = 250
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -360.0
-offset_top = -300.0
-offset_right = 360.0
-offset_bottom = 300.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_special_panel")
-
-[node name="Background" type="TextureRect" parent="MenuLayer/MenuPanel" unique_id=347904092]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 0
-texture = ExtResource("21_specialpanel")
-expand_mode = 1
-
-[node name="OptionsContainer" type="VBoxContainer" parent="MenuLayer/MenuPanel" unique_id=889124941]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 220.0
-offset_top = 50.0
-offset_right = -220.0
-offset_bottom = -155.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 9
-
-[node name="ContinueButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=1700439022]
-custom_minimum_size = Vector2(0, 54)
-layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("22_factoption")
-texture_pressed = ExtResource("23_factoption_selected")
-texture_hover = ExtResource("23_factoption_selected")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/ContinueButton" unique_id=1415989405]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 36.0
-offset_top = 8.0
-offset_right = -36.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
-theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 26
-text = "Continue"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="NewGameButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=1039908872]
-custom_minimum_size = Vector2(0, 54)
-layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("22_factoption")
-texture_pressed = ExtResource("23_factoption_selected")
-texture_hover = ExtResource("23_factoption_selected")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/NewGameButton" unique_id=5138067]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 36.0
-offset_top = 8.0
-offset_right = -36.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
-theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 26
-text = "New game"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="TutorialButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=837719486]
-custom_minimum_size = Vector2(0, 54)
-layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("22_factoption")
-texture_pressed = ExtResource("23_factoption_selected")
-texture_hover = ExtResource("23_factoption_selected")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/TutorialButton" unique_id=197936743]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 36.0
-offset_top = 8.0
-offset_right = -36.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
-theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 26
-text = "Tutorial"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="CreditsButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=731506261]
-custom_minimum_size = Vector2(0, 54)
-layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("22_factoption")
-texture_pressed = ExtResource("23_factoption_selected")
-texture_hover = ExtResource("23_factoption_selected")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/CreditsButton" unique_id=975178395]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 36.0
-offset_top = 8.0
-offset_right = -36.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
-theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 26
-text = "Credits"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="MainMenuButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=1254354281]
-custom_minimum_size = Vector2(0, 54)
-layout_mode = 2
-size_flags_horizontal = 3
-texture_normal = ExtResource("22_factoption")
-texture_pressed = ExtResource("23_factoption_selected")
-texture_hover = ExtResource("23_factoption_selected")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/MainMenuButton" unique_id=1296188322]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 36.0
-offset_top = 8.0
-offset_right = -36.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
-theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 26
-text = "Main Menu"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="AudioToggles" type="HBoxContainer" parent="MenuLayer/MenuPanel" unique_id=589887345]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 205.0
-offset_top = -155.0
-offset_right = -205.0
-offset_bottom = -35.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/separation = 48
-alignment = 1
-
-[node name="SoundToggleButton" type="TextureButton" parent="MenuLayer/MenuPanel/AudioToggles" unique_id=1389905376]
-custom_minimum_size = Vector2(112, 112)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_normal = ExtResource("29_audio_hitbox")
-texture_pressed = ExtResource("29_audio_hitbox")
-texture_hover = ExtResource("29_audio_hitbox")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="SoundToggleIcon" type="TextureRect" parent="MenuLayer/MenuPanel/AudioToggles/SoundToggleButton" unique_id=205350513]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.61800003
-anchor_right = 0.5
-anchor_bottom = 0.61800003
-offset_left = -45.0
-offset_top = -58.216003
-offset_right = 45.0
-offset_bottom = 31.783997
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("25_sound_on")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="MusicToggleButton" type="TextureButton" parent="MenuLayer/MenuPanel/AudioToggles" unique_id=881549424]
-custom_minimum_size = Vector2(112, 112)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-texture_normal = ExtResource("29_audio_hitbox")
-texture_pressed = ExtResource("29_audio_hitbox")
-texture_hover = ExtResource("29_audio_hitbox")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="MusicToggleIcon" type="TextureRect" parent="MenuLayer/MenuPanel/AudioToggles/MusicToggleButton" unique_id=495666895]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.625
-anchor_right = 0.5
-anchor_bottom = 0.625
-offset_left = -45.0
-offset_top = -59.0
-offset_right = 45.0
-offset_bottom = 31.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("27_music_on")
-expand_mode = 1
-stretch_mode = 5
 
 [node name="ProgressPanel" type="TextureRect" parent="UI" unique_id=1441470817]
 offset_left = 810.0
@@ -453,10 +180,10 @@ text = "Invent"
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/InventoryPanel" unique_id=2042724075]
 visible = false
 layout_mode = 0
-offset_left = 15.0
-offset_top = 50.0
-offset_right = 165.0
-offset_bottom = 340.0
+offset_left = 57.0
+offset_top = 48.0
+offset_right = 167.0
+offset_bottom = 318.0
 theme_override_constants/separation = 5
 
 [node name="Slot1" type="ColorRect" parent="UI/InventoryPanel/VBoxContainer" unique_id=1114746142]
@@ -917,6 +644,277 @@ theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="MenuLayer" type="CanvasLayer" parent="." unique_id=1103051786]
+layer = 10
+
+[node name="MenuInputBlocker" type="ColorRect" parent="MenuLayer" unique_id=1834586010]
+visible = false
+z_index = 249
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0)
+
+[node name="MenuPanel" type="Panel" parent="MenuLayer" unique_id=60460820]
+visible = false
+z_index = 250
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -300.0
+offset_right = 360.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_special_panel")
+
+[node name="Background" type="TextureRect" parent="MenuLayer/MenuPanel" unique_id=347904092]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+texture = ExtResource("21_specialpanel")
+expand_mode = 1
+
+[node name="OptionsContainer" type="VBoxContainer" parent="MenuLayer/MenuPanel" unique_id=889124941]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 220.0
+offset_top = 50.0
+offset_right = -220.0
+offset_bottom = -155.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 9
+
+[node name="ContinueButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=1700439022]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/ContinueButton" unique_id=1415989405]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 8.0
+offset_right = -36.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "Continue"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NewGameButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=1039908872]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/NewGameButton" unique_id=5138067]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 8.0
+offset_right = -36.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "New game"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TutorialButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=837719486]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/TutorialButton" unique_id=197936743]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 8.0
+offset_right = -36.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "Tutorial"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CreditsButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=731506261]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/CreditsButton" unique_id=975178395]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 8.0
+offset_right = -36.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "Credits"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainMenuButton" type="TextureButton" parent="MenuLayer/MenuPanel/OptionsContainer" unique_id=1254354281]
+custom_minimum_size = Vector2(0, 54)
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("22_factoption")
+texture_pressed = ExtResource("23_factoption_selected")
+texture_hover = ExtResource("23_factoption_selected")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Label" type="Label" parent="MenuLayer/MenuPanel/OptionsContainer/MainMenuButton" unique_id=1296188322]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 8.0
+offset_right = -36.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "Main Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AudioToggles" type="HBoxContainer" parent="MenuLayer/MenuPanel" unique_id=589887345]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 205.0
+offset_top = -155.0
+offset_right = -205.0
+offset_bottom = -35.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 48
+alignment = 1
+
+[node name="SoundToggleButton" type="TextureButton" parent="MenuLayer/MenuPanel/AudioToggles" unique_id=1389905376]
+custom_minimum_size = Vector2(112, 112)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("29_audio_hitbox")
+texture_pressed = ExtResource("29_audio_hitbox")
+texture_hover = ExtResource("29_audio_hitbox")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SoundToggleIcon" type="TextureRect" parent="MenuLayer/MenuPanel/AudioToggles/SoundToggleButton" unique_id=205350513]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.61800003
+anchor_right = 0.5
+anchor_bottom = 0.61800003
+offset_left = -45.0
+offset_top = -58.216003
+offset_right = 45.0
+offset_bottom = 31.783997
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("25_sound_on")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MusicToggleButton" type="TextureButton" parent="MenuLayer/MenuPanel/AudioToggles" unique_id=881549424]
+custom_minimum_size = Vector2(112, 112)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("29_audio_hitbox")
+texture_pressed = ExtResource("29_audio_hitbox")
+texture_hover = ExtResource("29_audio_hitbox")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="MusicToggleIcon" type="TextureRect" parent="MenuLayer/MenuPanel/AudioToggles/MusicToggleButton" unique_id=495666895]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.625
+anchor_right = 0.5
+anchor_bottom = 0.625
+offset_left = -45.0
+offset_top = -59.0
+offset_right = 45.0
+offset_bottom = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("27_music_on")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Characters" type="Node2D" parent="." unique_id=2129204479]
 

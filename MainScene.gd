@@ -4,6 +4,74 @@ const SOUND_ON_ICON := preload("res://sprites/Sound On Icon.png")
 const SOUND_OFF_ICON := preload("res://sprites/Sound Off Icon.png")
 const MUSIC_ON_ICON := preload("res://sprites/Music On Icon.png")
 const MUSIC_OFF_ICON := preload("res://sprites/Music Off Icon.png")
+const ITEM_SPRITE_SHEET := preload("res://sprites/Items SNM.png")
+const ITEM_ATLAS_COLUMNS := 3
+const ITEM_ATLAS_CELL_SIZE := Vector2(418, 418)
+const MAX_INVENTORY_ITEMS := 5
+const INVENTORY_SLOT_POSITIONS := [
+	Vector2(86, 48),
+	Vector2(86, 101),
+	Vector2(86, 153),
+	Vector2(86, 206),
+	Vector2(86, 259),
+]
+const INVENTORY_ICON_SIZE := Vector2(46, 46)
+const ITEMS := [
+	{
+		"id": "marshall_mcluhan",
+		"theme": "Marshall McLuhan",
+		"catchphrase": "The Medium is the Boss Fight.",
+		"artifact": "A glowing TV set with a speech bubble trapped inside the screen."
+	},
+	{
+		"id": "lev_manovich",
+		"theme": "Lev Manovich",
+		"catchphrase": "Database First, Narrative Later.",
+		"artifact": "A film reel wrapped around a database cylinder, like cinema being eaten by software."
+	},
+	{
+		"id": "manuel_castells",
+		"theme": "Manuel Castells",
+		"catchphrase": "I Don't Have Friends, I Have Nodes.",
+		"artifact": "A city skyline made of glowing network dots and lines."
+	},
+	{
+		"id": "bolter_grusin",
+		"theme": "Bolter-Grusin",
+		"catchphrase": "New Media: Now Remaking Old Media Again.",
+		"artifact": "A picture frame inside a screen inside a book inside another screen."
+	},
+	{
+		"id": "friedrich_kittler",
+		"theme": "Friedrich Kittler",
+		"catchphrase": "Your Hardware Has Already Decided.",
+		"artifact": "A typewriter fused with a circuit board and a skull-shaped cassette tape."
+	},
+	{
+		"id": "donna_haraway",
+		"theme": "Donna Haraway",
+		"catchphrase": "Cyborgs Don't Do Natural.",
+		"artifact": "A half-human, half-machine hand holding a tiny companion species."
+	},
+	{
+		"id": "matthew_fuller",
+		"theme": "Matthew Fuller",
+		"catchphrase": "There Is No Escape from Media Ecology.",
+		"artifact": "A messy ecosystem terrarium filled with cables, bugs, phones, moss, and antennas."
+	},
+	{
+		"id": "luciano_floridi",
+		"theme": "Luciano Floridi",
+		"catchphrase": "Welcome to the Infosphere. Please Update Your Ethics.",
+		"artifact": "A transparent globe made of data streams with a small moral compass inside."
+	},
+	{
+		"id": "claude_shannon",
+		"theme": "Claude Shannon",
+		"catchphrase": "Less Noise, More Bits.",
+		"artifact": "A pixelated telegraph key shooting clean binary through a storm of static."
+	},
+]
 
 @export var level_duration: float = 120.0 # 2 minutes in seconds
 var current_time: float = 0.0
@@ -31,6 +99,8 @@ var current_time: float = 0.0
 @onready var funfact_button = $UI/BottomButtons/FunFactButton
 @onready var special_wheel_panel = $UI/SpecialWheelPanel
 @onready var special_button = $UI/BottomButtons/SpecialButton
+@onready var inventory_panel: TextureRect = $UI/InventoryPanel
+@onready var ui_layer: CanvasLayer = $UI
 
 @onready var lvl_label: Label = $UI/ProgressPanel/LvlLabel
 
@@ -57,6 +127,14 @@ var josef_active: bool = false
 var cenek_active: bool = false
 var dj_next_level_bonus: bool = false
 var action_multiplier: float = 1.0
+var inventory_items: Array[int] = []
+var inventory_icon_nodes: Array[TextureRect] = []
+var hovered_inventory_slot: int = -1
+var item_hover_bubble: Panel
+var item_hover_label: Label
+var teacher_speech_bubble: Panel
+var teacher_speech_label: Label
+var teacher_speech_token: int = 0
 
 func _ready():
 	menu_button.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -96,6 +174,8 @@ func _ready():
 	
 	special_button.pressed.connect(_on_special_button_pressed)
 	special_wheel_panel.wheel_finished.connect(_on_wheel_finished)
+	_build_inventory_slots()
+	_build_item_bubbles()
 	
 	joke_cooldown_label = Label.new()
 	joke_cooldown_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -121,6 +201,160 @@ func _ready():
 		
 	update_stamina_label()
 	start_new_level()
+
+func _build_inventory_slots():
+	for icon in inventory_icon_nodes:
+		icon.queue_free()
+	inventory_icon_nodes.clear()
+	
+	for i in range(MAX_INVENTORY_ITEMS):
+		var icon := TextureRect.new()
+		icon.position = INVENTORY_SLOT_POSITIONS[i]
+		icon.size = INVENTORY_ICON_SIZE
+		icon.pivot_offset = INVENTORY_ICON_SIZE * 0.5
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.mouse_filter = Control.MOUSE_FILTER_STOP
+		icon.mouse_entered.connect(_on_inventory_item_mouse_entered.bind(i))
+		icon.mouse_exited.connect(_on_inventory_item_mouse_exited.bind(i))
+		icon.gui_input.connect(_on_inventory_item_gui_input.bind(i))
+		inventory_panel.add_child(icon)
+		inventory_icon_nodes.append(icon)
+
+func _build_item_bubbles():
+	item_hover_bubble = _create_text_bubble(Vector2(650, 190), Vector2(245, 82), 15)
+	item_hover_bubble.visible = false
+	ui_layer.add_child(item_hover_bubble)
+	item_hover_label = item_hover_bubble.get_node("Text") as Label
+	
+	teacher_speech_bubble = _create_text_bubble(Vector2(365, 100), Vector2(390, 92), 20)
+	teacher_speech_bubble.visible = false
+	ui_layer.add_child(teacher_speech_bubble)
+	teacher_speech_label = teacher_speech_bubble.get_node("Text") as Label
+
+func _create_text_bubble(pos: Vector2, bubble_size: Vector2, font_size: int) -> Panel:
+	var bubble := Panel.new()
+	bubble.position = pos
+	bubble.size = bubble_size
+	bubble.z_index = 120
+	bubble.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(1, 0.94, 0.78, 0.96)
+	style.border_color = Color(0.15, 0.065, 0.015, 1)
+	style.border_width_left = 4
+	style.border_width_top = 4
+	style.border_width_right = 4
+	style.border_width_bottom = 4
+	style.corner_radius_top_left = 14
+	style.corner_radius_top_right = 14
+	style.corner_radius_bottom_right = 14
+	style.corner_radius_bottom_left = 14
+	bubble.add_theme_stylebox_override("panel", style)
+	
+	var label := Label.new()
+	label.name = "Text"
+	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	label.offset_left = 12
+	label.offset_top = 10
+	label.offset_right = -12
+	label.offset_bottom = -10
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_color_override("font_color", Color(0.11, 0.055, 0.02, 1))
+	label.add_theme_font_size_override("font_size", font_size)
+	bubble.add_child(label)
+	
+	return bubble
+
+func _add_random_item_to_inventory():
+	if inventory_items.size() >= MAX_INVENTORY_ITEMS:
+		return
+	
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	var item_index := rng.randi() % ITEMS.size()
+	inventory_items.append(item_index)
+	_update_inventory_ui()
+
+func _update_inventory_ui():
+	for i in range(inventory_icon_nodes.size()):
+		var icon := inventory_icon_nodes[i]
+		icon.scale = Vector2.ONE
+		icon.modulate = Color.WHITE
+		if i < inventory_items.size():
+			var item_index := inventory_items[i]
+			var item: Dictionary = ITEMS[item_index]
+			icon.texture = _create_item_texture(item_index)
+			icon.tooltip_text = ""
+			icon.visible = true
+		else:
+			icon.texture = null
+			icon.tooltip_text = ""
+			icon.visible = false
+	
+	if hovered_inventory_slot >= inventory_items.size():
+		hovered_inventory_slot = -1
+		item_hover_bubble.visible = false
+
+func _create_item_texture(item_index: int) -> AtlasTexture:
+	var atlas := AtlasTexture.new()
+	atlas.atlas = ITEM_SPRITE_SHEET
+	var column := item_index % ITEM_ATLAS_COLUMNS
+	var row := floori(float(item_index) / ITEM_ATLAS_COLUMNS)
+	atlas.region = Rect2(
+		Vector2(column, row) * ITEM_ATLAS_CELL_SIZE,
+		ITEM_ATLAS_CELL_SIZE
+	)
+	return atlas
+
+func _on_inventory_item_mouse_entered(slot_index: int):
+	if slot_index >= inventory_items.size():
+		return
+	
+	hovered_inventory_slot = slot_index
+	var icon := inventory_icon_nodes[slot_index]
+	icon.scale = Vector2(1.18, 1.18)
+	icon.modulate = Color(1.25, 1.25, 1.25, 1)
+	
+	var item: Dictionary = ITEMS[inventory_items[slot_index]]
+	item_hover_label.text = item["theme"] + "\n\"" + item["catchphrase"] + "\""
+	item_hover_bubble.visible = true
+
+func _on_inventory_item_mouse_exited(slot_index: int):
+	if slot_index < inventory_icon_nodes.size():
+		inventory_icon_nodes[slot_index].scale = Vector2.ONE
+		inventory_icon_nodes[slot_index].modulate = Color.WHITE
+	
+	if hovered_inventory_slot == slot_index:
+		hovered_inventory_slot = -1
+		item_hover_bubble.visible = false
+
+func _on_inventory_item_gui_input(event: InputEvent, slot_index: int):
+	if slot_index >= inventory_items.size() or _is_any_minigame_open():
+		return
+	
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		var item: Dictionary = ITEMS[inventory_items[slot_index]]
+		inventory_items.remove_at(slot_index)
+		hovered_inventory_slot = -1
+		item_hover_bubble.visible = false
+		_update_inventory_ui()
+		_show_teacher_speech(str(item["catchphrase"]))
+		get_viewport().set_input_as_handled()
+
+func _show_teacher_speech(text: String):
+	teacher_speech_token += 1
+	var current_token := teacher_speech_token
+	teacher_speech_label.text = "\"" + text + "\""
+	teacher_speech_bubble.visible = true
+	
+	var timer := get_tree().create_timer(4.0)
+	timer.timeout.connect(func():
+		if current_token == teacher_speech_token:
+			teacher_speech_bubble.visible = false
+	)
 
 func _process(delta: float):
 	if current_time < level_duration:
@@ -224,6 +458,7 @@ func _set_audio_bus_mute(bus_name: String, muted: bool):
 
 func start_new_level():
 	lvl_label.text = "lvl " + str(current_level)
+	_add_random_item_to_inventory()
 	
 	# Reset special wheel state for the new level
 	special_used_this_level = false
