@@ -1,3 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Local-only sprite backups created during UI swaps
+sprites/_backup_*/
+sprites/_original_backup/

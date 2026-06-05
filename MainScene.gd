@@ -7,15 +7,9 @@ const MUSIC_OFF_ICON := preload("res://sprites/Music Off Icon.png")
 const ITEM_SPRITE_SHEET := preload("res://sprites/Items SNM.png")
 const ITEM_ATLAS_COLUMNS := 3
 const ITEM_ATLAS_CELL_SIZE := Vector2(418, 418)
-const MAX_INVENTORY_ITEMS := 5
-const INVENTORY_SLOT_POSITIONS := [
-	Vector2(86, 48),
-	Vector2(86, 101),
-	Vector2(86, 153),
-	Vector2(86, 206),
-	Vector2(86, 259),
-]
-const INVENTORY_ICON_SIZE := Vector2(46, 46)
+# Inventory slots are now scene-driven: any TextureRect named "Slot*" directly
+# under InventoryPanel is picked up. Edit positions/sizes in the editor.
+var max_inventory_items: int = 5
 const ITEMS := [
 	{
 		"id": "marshall_mcluhan",
@@ -203,22 +197,24 @@ func _ready():
 	start_new_level()
 
 func _build_inventory_slots():
-	for icon in inventory_icon_nodes:
-		icon.queue_free()
 	inventory_icon_nodes.clear()
-	
-	for i in range(MAX_INVENTORY_ITEMS):
-		var icon := TextureRect.new()
-		icon.position = INVENTORY_SLOT_POSITIONS[i]
-		icon.size = INVENTORY_ICON_SIZE
-		icon.pivot_offset = INVENTORY_ICON_SIZE * 0.5
+
+	var slots: Array[TextureRect] = []
+	for child in inventory_panel.get_children():
+		if child is TextureRect and String(child.name).begins_with("Slot"):
+			slots.append(child)
+	slots.sort_custom(func(a, b): return String(a.name).naturalnocasecmp_to(String(b.name)) < 0)
+	max_inventory_items = slots.size()
+
+	for i in range(slots.size()):
+		var icon: TextureRect = slots[i]
+		icon.pivot_offset = icon.size * 0.5
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		icon.mouse_filter = Control.MOUSE_FILTER_STOP
 		icon.mouse_entered.connect(_on_inventory_item_mouse_entered.bind(i))
 		icon.mouse_exited.connect(_on_inventory_item_mouse_exited.bind(i))
 		icon.gui_input.connect(_on_inventory_item_gui_input.bind(i))
-		inventory_panel.add_child(icon)
 		inventory_icon_nodes.append(icon)
 
 func _build_item_bubbles():
@@ -269,7 +265,7 @@ func _create_text_bubble(pos: Vector2, bubble_size: Vector2, font_size: int) -> 
 	return bubble
 
 func _add_random_item_to_inventory():
-	if inventory_items.size() >= MAX_INVENTORY_ITEMS:
+	if inventory_items.size() >= max_inventory_items:
 		return
 	
 	var rng := RandomNumberGenerator.new()

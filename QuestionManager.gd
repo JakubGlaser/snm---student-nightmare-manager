@@ -12,7 +12,7 @@ var is_selecting: bool = false
 var is_qte_active: bool = false
 
 var active_group_students: Array = []
-var current_qte_student: Sprite2D = null
+var current_qte_student: Node2D = null
 var current_qte_letter: String = ""
 var qte_timer: float = 0.0
 var max_qte_time: float = 2.0
@@ -53,14 +53,14 @@ func _on_group_selected(group_name: String):
 	
 	active_group_students.clear()
 	
-	# Mapping based on typical layout indices (1-10)
+	# 9 columns arranged as 3 groups of 3 (left -> center -> right)
 	var indices = []
 	if group_name == "left":
-		indices = [0, 3, 6, 7] # Student 1, 4, 7, 8
+		indices = [0, 1, 2]
 	elif group_name == "center":
-		indices = [1, 4, 9] # Student 2, 5, 10
+		indices = [3, 4, 5]
 	elif group_name == "right":
-		indices = [2, 5, 8] # Student 3, 6, 9
+		indices = [6, 7, 8]
 		
 	var all_students = students_node.get_children()
 	for idx in indices:
