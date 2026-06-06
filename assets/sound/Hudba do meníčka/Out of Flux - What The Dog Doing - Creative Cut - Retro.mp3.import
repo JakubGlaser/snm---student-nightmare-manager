@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dmpwpvhobekwg"
+path="res://.godot/imported/Out of Flux - What The Dog Doing - Creative Cut - Retro.mp3-e77be2693e895a6fd0a8d3c7d62959d8.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/Hudba do meníčka/Out of Flux - What The Dog Doing - Creative Cut - Retro.mp3"
+dest_files=["res://.godot/imported/Out of Flux - What The Dog Doing - Creative Cut - Retro.mp3-e77be2693e895a6fd0a8d3c7d62959d8.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

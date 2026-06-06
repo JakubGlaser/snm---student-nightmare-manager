@@ -2,9 +2,16 @@ extends Control
 
 signal wheel_finished(result: String)
 
-const OPTION_TEXTURE := preload("res://sprites/Minigame Option.png")
-const OPTION_SELECTED_TEXTURE := preload("res://sprites/Minigame Option Selected.png")
 const PROJECT_FONT := preload("res://assets/fonts/Nunito-Regular.ttf")
+const WHEEL_GRAPHIC := preload("res://WheelGraphic.gd")
+const SLOT_SFX := preload("res://assets/sound/ES_Games, Casino, Gambling, Slot Machine, Gambling, Slot Machine, Reels Rolling, Loop, Middle - Epidemic Sound.mp3")
+
+# Dedicated bus so we can pitch-shift the spin loop independently of its
+# playback tempo: as the wheel brakes we slow the track (player.pitch_scale)
+# while raising the perceived pitch (pitch-shift effect).
+const SPIN_BUS := "WheelSpin"
+const SPIN_TEMPO_MIN := 0.45   # slowest playback tempo at full stop
+const SPIN_PITCH_MAX := 1.7    # highest pitch-shift at full stop
 
 func _make_bold_font() -> FontVariation:
 	var fv := FontVariation.new()
@@ -12,39 +19,45 @@ func _make_bold_font() -> FontVariation:
 	fv.variation_embolden = 0.6
 	return fv
 
+# Each entry drives one slice of the wheel. `color` is the slice fill.
 const ABILITIES := [
 	{
 		"id": "sadluck_ai_slop",
 		"title": "Sadluck AI slop",
-		"description": "Everyone gets 120% focus!"
+		"description": "Everyone gets 120% focus!",
+		"color": Color(0.45, 0.65, 0.30)
 	},
 	{
 		"id": "josefs_tobacco",
 		"title": "Josef's tobacco",
-		"description": "All actions are 2x effective this level!"
+		"description": "All actions are 2x effective this level!",
+		"color": Color(0.88, 0.55, 0.20)
 	},
 	{
 		"id": "ceneks_endless_speech",
 		"title": "Cenek's endless speech",
-		"description": "Focus frozen + time runs 4x faster!"
+		"description": "Focus frozen + time runs 4x faster!",
+		"color": Color(0.35, 0.55, 0.78)
 	},
 	{
 		"id": "djs_failed_calculation",
 		"title": "DJ's failed calculation",
-		"description": "-20 focus now, but 120% next level!"
+		"description": "-20 focus now, but 120% next level!",
+		"color": Color(0.72, 0.40, 0.62)
 	}
 ]
 
 var is_spinning: bool = false
 var is_stopping: bool = false
-var spin_speed: float = 12.0
-var current_pos: float = 0.0
+var spin_speed: float = 0.0          # radians / second
 var deceleration_rate: float = 0.0
-var option_rows: Array[TextureRect] = []
-var option_labels: Array[Label] = []
+var rotation_angle: float = 0.0      # radians
+var stop_start_speed: float = 0.0    # spin_speed at the moment braking began
 
-@onready var options_container: VBoxContainer = $OptionsScroll/OptionsContainer
-@onready var options_scroll: ScrollContainer = $OptionsScroll
+var wheel: Control
+var spin_sfx: AudioStreamPlayer
+var pitch_effect: AudioEffectPitchShift
+
 @onready var instruction_label: Label = $InstructionLabel
 @onready var result_label: Label = $ResultLabel
 @onready var desc_label: Label = $DescLabel
@@ -52,116 +65,130 @@ var option_labels: Array[Label] = []
 func _ready():
 	visible = false
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_build_option_rows()
+	_build_wheel()
+	_setup_audio()
+
+func _setup_audio():
+	# Create (or reuse) a private bus carrying a pitch-shift effect.
+	var idx := AudioServer.get_bus_index(SPIN_BUS)
+	if idx == -1:
+		idx = AudioServer.bus_count
+		AudioServer.add_bus(idx)
+		AudioServer.set_bus_name(idx, SPIN_BUS)
+		AudioServer.set_bus_send(idx, "Master")
+		pitch_effect = AudioEffectPitchShift.new()
+		pitch_effect.pitch_scale = 1.0
+		AudioServer.add_bus_effect(idx, pitch_effect)
+	else:
+		for e in range(AudioServer.get_bus_effect_count(idx)):
+			var eff := AudioServer.get_bus_effect(idx, e)
+			if eff is AudioEffectPitchShift:
+				pitch_effect = eff
+				break
+
+	spin_sfx = AudioStreamPlayer.new()
+	spin_sfx.process_mode = Node.PROCESS_MODE_ALWAYS
+	spin_sfx.bus = SPIN_BUS
+	# Duplicate so we can flip loop on without mutating the shared const resource.
+	var stream: AudioStream = SLOT_SFX.duplicate()
+	if stream is AudioStreamMP3:
+		stream.loop = true
+	spin_sfx.stream = stream
+	add_child(spin_sfx)
+
+func _build_wheel():
+	wheel = Control.new()
+	wheel.set_script(WHEEL_GRAPHIC)
+	wheel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(wheel)
+	wheel.label_font = _make_bold_font()
+	var segs: Array = []
+	for ability in ABILITIES:
+		segs.append({ "title": ability["title"], "color": ability["color"] })
+	wheel.segments = segs
+	_layout_wheel()
+
+func _layout_wheel():
+	# Square wheel, centered horizontally, sitting under the instruction label.
+	var d : float = min(size.x - 80.0, 320.0)
+	wheel.size = Vector2(d, d)
+	wheel.position = Vector2((size.x - d) * 0.5, 96.0)
 
 func start_minigame():
 	visible = true
 	is_spinning = true
 	is_stopping = false
-	spin_speed = 12.0
-	current_pos = randf() * ABILITIES.size()
+	spin_speed = randf_range(11.0, 15.0)
+	rotation_angle = randf() * TAU
 	result_label.text = ""
 	desc_label.text = ""
 	instruction_label.text = "Press SPACE to stop the wheel!"
-	
+
+	_layout_wheel()
+	wheel.rotation_angle = rotation_angle
+	wheel.queue_redraw()
+
+	# Reset + start the rolling-reels loop at normal tempo / pitch.
+	spin_sfx.pitch_scale = 1.0
+	if pitch_effect != null:
+		pitch_effect.pitch_scale = 1.0
+	if Game.sound_enabled:
+		spin_sfx.play()
+
 	get_tree().paused = true
-	_update_highlight()
 
 func _process(delta: float):
 	if not is_spinning:
 		return
-	
-	current_pos = fposmod(current_pos + (spin_speed * delta), ABILITIES.size())
-	
+
+	rotation_angle = fposmod(rotation_angle + spin_speed * delta, TAU)
+
 	if is_stopping:
 		spin_speed -= deceleration_rate * delta
-		if spin_speed <= 0.5:
+		# Wind the audio down in lock-step with the wheel: slower tempo, higher pitch.
+		var progress : float = 1.0 - clamp(spin_speed / max(stop_start_speed, 0.001), 0.0, 1.0)
+		spin_sfx.pitch_scale = lerp(1.0, SPIN_TEMPO_MIN, progress)
+		if pitch_effect != null:
+			pitch_effect.pitch_scale = lerp(1.0, SPIN_PITCH_MAX, progress)
+		if spin_speed <= 0.2:
 			spin_speed = 0.0
 			is_spinning = false
-			var snapped = int(round(current_pos)) % ABILITIES.size()
-			current_pos = float(snapped)
-			_update_highlight()
+			spin_sfx.stop()
+			wheel.rotation_angle = rotation_angle
+			wheel.queue_redraw()
 			_on_wheel_stopped()
 			return
-	
-	_update_highlight()
+
+	wheel.rotation_angle = rotation_angle
+	wheel.queue_redraw()
 
 func _input(event: InputEvent):
 	if not is_spinning or is_stopping:
 		return
-	
+
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_SPACE:
 			is_stopping = true
-			deceleration_rate = spin_speed / 2.5
+			stop_start_speed = spin_speed
+			deceleration_rate = spin_speed / randf_range(2.2, 3.2)
 			instruction_label.text = "Stopping..."
 			get_viewport().set_input_as_handled()
 
-func _build_option_rows():
-	for child in options_container.get_children():
-		child.queue_free()
-	
-	option_rows.clear()
-	option_labels.clear()
-	
-	for ability in ABILITIES:
-		var row := TextureRect.new()
-		row.custom_minimum_size = Vector2(0, 50)
-		row.texture = OPTION_TEXTURE
-		row.ignore_texture_size = true
-		row.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		
-		var label := Label.new()
-		label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		label.add_theme_font_override("font", _make_bold_font())
-		label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
-		label.add_theme_color_override("font_outline_color", Color(1, 0.94, 0.78, 1))
-		label.add_theme_constant_override("outline_size", 4)
-		label.add_theme_font_size_override("font_size", 20)
-		label.text = ability["title"]
-		
-		row.add_child(label)
-		options_container.add_child(row)
-		option_rows.append(row)
-		option_labels.append(label)
-
-func _update_highlight():
-	var active = int(current_pos) % ABILITIES.size()
-	for i in range(option_rows.size()):
-		var is_active = i == active
-		option_rows[i].texture = OPTION_SELECTED_TEXTURE if is_active else OPTION_TEXTURE
-		option_labels[i].modulate = Color.WHITE if is_active else Color(0.82, 0.82, 0.82)
-		option_labels[i].add_theme_font_size_override("font_size", 22 if is_active else 18)
-		option_labels[i].text = ABILITIES[i]["title"]
-	
-	_keep_active_option_visible(active)
-
-func _keep_active_option_visible(active: int):
-	if active < 0 or active >= option_rows.size():
-		return
-	
-	var row := option_rows[active]
-	var row_top := int(row.position.y)
-	var row_bottom := row_top + int(row.size.y)
-	var visible_top := options_scroll.scroll_vertical
-	var visible_bottom := visible_top + int(options_scroll.size.y)
-	
-	if row_top < visible_top:
-		options_scroll.scroll_vertical = row_top
-	elif row_bottom > visible_bottom:
-		options_scroll.scroll_vertical = row_bottom - int(options_scroll.size.y)
+# Which slice sits under the fixed needle (pointing straight up = angle -PI/2).
+func _current_index() -> int:
+	var n := ABILITIES.size()
+	var seg := TAU / n
+	var rel := fposmod(-PI / 2.0 - rotation_angle, TAU)
+	return int(rel / seg) % n
 
 func _on_wheel_stopped():
-	var final_index = int(current_pos) % ABILITIES.size()
-	var ability: Dictionary = ABILITIES[final_index]
-	
+	var idx := _current_index()
+	var ability: Dictionary = ABILITIES[idx]
+
 	instruction_label.text = ""
-	result_label.text = ability["title"] + "!"
-	desc_label.text = ability["description"]
-	
+	result_label.text = str(ability["title"]) + "!"
+	desc_label.text = str(ability["description"])
+
 	var timer = get_tree().create_timer(3.0, true)
 	timer.timeout.connect(_on_result_timeout.bind(ability["id"]))
 

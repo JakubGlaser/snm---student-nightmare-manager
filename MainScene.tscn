@@ -32,6 +32,7 @@
 [ext_resource type="FontFile" uid="uid://dv26f1y5gsi82" path="res://assets/fonts/Nunito-Regular.ttf" id="50_nunito"]
 [ext_resource type="Texture2D" uid="uid://bjwxyjcpppdy5" path="res://sprites/Menu Button.png" id="60_menubtn"]
 [ext_resource type="Texture2D" uid="uid://oycgt3006qwt" path="res://sprites/Menu Button Pressed.png" id="61_menubtn_pressed"]
+[ext_resource type="AudioStream" path="res://assets/sound/Do pozadí do gameplaye/SNM_Mulátor.mp3" id="99_game_music"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_progress"]
 shader = ExtResource("30_progshader")
@@ -654,9 +655,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -380.0
-offset_top = -215.0
+offset_top = -270.0
 offset_right = 380.0
-offset_bottom = 215.0
+offset_bottom = 270.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_special_panel")
@@ -690,24 +691,6 @@ theme_override_font_sizes/font_size = 36
 text = "Press SPACE to stop the wheel!"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="OptionsScroll" type="ScrollContainer" parent="UI/SpecialWheelPanel" unique_id=522936261]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 80.0
-offset_top = 118.0
-offset_right = -80.0
-offset_bottom = -150.0
-grow_horizontal = 2
-grow_vertical = 2
-horizontal_scroll_mode = 0
-
-[node name="OptionsContainer" type="VBoxContainer" parent="UI/SpecialWheelPanel/OptionsScroll" unique_id=845950233]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 4
 
 [node name="ResultLabel" type="Label" parent="UI/SpecialWheelPanel" unique_id=629844468]
 layout_mode = 1
@@ -1095,4 +1078,8 @@ script = ExtResource("12_student")
 wasted_sticker_offset = null
 wasted_sticker_scale = null
 wasted_sticker_rotation_jitter_deg = null
+
+[node name="GameMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("99_game_music")
+bus = &"Music"
 editor_preview_wasted = null

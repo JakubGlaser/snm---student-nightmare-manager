@@ -5,17 +5,20 @@ signal funfact_finished(success: bool)
 const FACT_OPTION_TEXTURE := preload("res://sprites/Minigame Option.png")
 const FACT_OPTION_SELECTED_TEXTURE := preload("res://sprites/Minigame Option Selected.png")
 
-const EVAL_GREEN := Color(0.10, 0.38, 0.13)  # dark forest
-const EVAL_RED := Color(0.55, 0.12, 0.12)   # dark wine
-const SCENE_OUTLINE_SIZE := 6                # matches what surgical edit applied
+const EVAL_GREEN := Color(0.10, 0.38, 0.13)
+const EVAL_RED  := Color(0.55, 0.12, 0.12)
+const COLOR_DEFAULT := Color(0.11, 0.055, 0.02, 1.0)
+const COLOR_OUTLINE := Color(1.0, 0.94, 0.78, 0.55)
+const SCENE_OUTLINE_SIZE := 4
 
 func _set_eval_style(label: Label, color: Color) -> void:
 	label.add_theme_color_override("font_color", color)
-	# Remove cream outline so the dark text reads cleanly
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0))
 	label.add_theme_constant_override("outline_size", 0)
 
 func _reset_eval_style(label: Label) -> void:
-	label.remove_theme_color_override("font_color")
+	label.add_theme_color_override("font_color", COLOR_DEFAULT)
+	label.add_theme_color_override("font_outline_color", COLOR_OUTLINE)
 	label.add_theme_constant_override("outline_size", SCENE_OUTLINE_SIZE)
 
 # Each entry: { "fact": "...", "is_fun": true/false }
@@ -118,6 +121,7 @@ func start_minigame():
 		labels[i].modulate = Color.WHITE
 		labels[i].text = current_facts[i]["fact"]
 		_fit_fact_label(labels[i], labels[i].text)
+		_reset_eval_style(labels[i])
 
 func _get_unused_fun_fact() -> String:
 	# Reset pool if exhausted

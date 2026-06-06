@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bs0nfhmav0jre"
+path="res://.godot/imported/Aves - Keep It Loose.mp3-45bda5c8e4a970b56f0c49108a515ce5.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/Hudba do meníčka/Aves - Keep It Loose.mp3"
+dest_files=["res://.godot/imported/Aves - Keep It Loose.mp3-45bda5c8e4a970b56f0c49108a515ce5.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -11,6 +11,133 @@ extends Node
 
 const MAIN_SCENE := preload("res://MainScene.tscn")
 const MAIN_MENU := preload("res://MainMenu.tscn")
+const UI_SFX := preload("res://assets/sound/Upravené/ES_Games, Video, Menu UI, Select, Notification 21 - Epidemic Sound.mp3")
+
+var music_enabled: bool = true
+var sound_enabled: bool = true
+
+func play_ui_sound() -> void:
+	if not sound_enabled:
+		return
+	var player := AudioStreamPlayer.new()
+	player.stream = UI_SFX
+	player.pitch_scale = randf_range(0.88, 1.18)
+	player.finished.connect(player.queue_free)
+	get_tree().root.add_child(player)
+	player.play()
+
+func connect_ui_sounds(root_node: Node) -> void:
+	for child in root_node.get_children():
+		if child is BaseButton:
+			if not child.pressed.is_connected(play_ui_sound):
+				child.pressed.connect(play_ui_sound)
+			if not child.mouse_entered.is_connected(play_ui_sound):
+				child.mouse_entered.connect(play_ui_sound)
+		connect_ui_sounds(child)
+
+# --- Leaderboard (shared by menu + gameplay) ---
+
+func load_leaderboard() -> Array:
+	if not FileAccess.file_exists("user://leaderboard.json"):
+		return []
+	var file := FileAccess.open("user://leaderboard.json", FileAccess.READ)
+	var text := file.get_as_text()
+	file.close()
+	var parsed = JSON.parse_string(text)
+	return parsed if parsed is Array else []
+
+func save_score(player_name: String, score: int, level: int) -> void:
+	var board := load_leaderboard()
+	board.append({
+		"name": player_name,
+		"score": score,
+		"level": level,
+		"date": Time.get_date_string_from_system()
+	})
+	board.sort_custom(func(a, b): return int(a["score"]) > int(b["score"]))
+	if board.size() > 10:
+		board = board.slice(0, 10)
+	var file := FileAccess.open("user://leaderboard.json", FileAccess.WRITE)
+	file.store_string(JSON.stringify(board, "\t"))
+	file.close()
+
+# Builds a self-contained leaderboard overlay (dark bg + panel + entries + a
+# close button). Caller adds the returned CanvasLayer to its own tree and
+# supplies what the button does via on_close.
+func build_leaderboard_overlay(close_text: String, on_close: Callable) -> CanvasLayer:
+	var layer := CanvasLayer.new()
+	layer.layer = 250
+	layer.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	var dim := ColorRect.new()
+	dim.anchor_right = 1.0
+	dim.anchor_bottom = 1.0
+	dim.color = Color(0.05, 0.05, 0.05, 0.7)
+	dim.mouse_filter = Control.MOUSE_FILTER_STOP
+	layer.add_child(dim)
+
+	var panel := Panel.new()
+	panel.size = Vector2(580, 530)
+	panel.position = Vector2(286, 59)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(1.0, 0.94, 0.78, 0.97)
+	style.border_color = Color(0.15, 0.065, 0.015, 1.0)
+	style.border_width_left = 4
+	style.border_width_top = 4
+	style.border_width_right = 4
+	style.border_width_bottom = 4
+	style.corner_radius_top_left = 16
+	style.corner_radius_top_right = 16
+	style.corner_radius_bottom_right = 16
+	style.corner_radius_bottom_left = 16
+	panel.add_theme_stylebox_override("panel", style)
+	layer.add_child(panel)
+
+	var title := Label.new()
+	title.text = "LEADERBOARD"
+	title.position = Vector2(0, 14)
+	title.size = Vector2(580, 44)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 32)
+	title.add_theme_color_override("font_color", Color(0.11, 0.055, 0.02, 1.0))
+	panel.add_child(title)
+
+	var board := load_leaderboard()
+	if board.is_empty():
+		var empty := Label.new()
+		empty.text = "No scores yet — go play!"
+		empty.position = Vector2(0, 220)
+		empty.size = Vector2(580, 40)
+		empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		empty.add_theme_font_size_override("font_size", 22)
+		empty.add_theme_color_override("font_color", Color(0.11, 0.055, 0.02, 1.0))
+		panel.add_child(empty)
+	else:
+		var medals := ["#1", "#2", "#3"]
+		for i in min(board.size(), 10):
+			var entry: Dictionary = board[i]
+			var prefix: String = medals[i] if i < medals.size() else ("#" + str(i + 1))
+			var row := Label.new()
+			row.text = "%s  %s — %d pts  (lvl %d)" % [
+				prefix, entry.get("name", "?"),
+				int(entry.get("score", 0)),
+				int(entry.get("level", 1))
+			]
+			row.position = Vector2(36, 64 + i * 40)
+			row.add_theme_font_size_override("font_size", 20)
+			row.add_theme_color_override("font_color", Color(0.11, 0.055, 0.02, 1.0))
+			panel.add_child(row)
+
+	var close_btn := Button.new()
+	close_btn.process_mode = Node.PROCESS_MODE_ALWAYS
+	close_btn.text = close_text
+	close_btn.position = Vector2(190, 468)
+	close_btn.size = Vector2(200, 48)
+	close_btn.add_theme_font_size_override("font_size", 22)
+	panel.add_child(close_btn)
+	close_btn.pressed.connect(on_close)
+	connect_ui_sounds(panel)
+	return layer
 
 var main_scene_instance: Node = null
 var main_menu_instance: Node = null
@@ -60,6 +187,16 @@ func resume_game() -> void:
 	get_tree().paused = false
 
 func return_to_menu_from_game() -> void:
+	show_menu()
+
+# Permanently throw away the current run (used after game over) so Continue
+# correctly reports "no game in progress" and shows its disabled sprite.
+func discard_game() -> void:
+	if main_scene_instance and is_instance_valid(main_scene_instance):
+		if main_scene_instance.is_inside_tree():
+			get_tree().root.remove_child(main_scene_instance)
+		main_scene_instance.queue_free()
+		main_scene_instance = null
 	show_menu()
 
 func quit_game() -> void:

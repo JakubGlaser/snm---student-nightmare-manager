@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cosvit3d3x25o"
+path="res://.godot/imported/ES_Games, Video, Menu UI, Select, Notification 21 - Epidemic Sound.mp3-25f48fde2708b00e382d533d653f5f4b.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/Upravené/ES_Games, Video, Menu UI, Select, Notification 21 - Epidemic Sound.mp3"
+dest_files=["res://.godot/imported/ES_Games, Video, Menu UI, Select, Notification 21 - Epidemic Sound.mp3-25f48fde2708b00e382d533d653f5f4b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

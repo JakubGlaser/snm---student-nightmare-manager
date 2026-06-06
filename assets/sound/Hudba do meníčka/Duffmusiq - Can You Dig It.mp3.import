@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dgs8p5t35jmmn"
+path="res://.godot/imported/Duffmusiq - Can You Dig It.mp3-9ac753c890a13ad04f61c91a5d54dad7.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/Hudba do meníčka/Duffmusiq - Can You Dig It.mp3"
+dest_files=["res://.godot/imported/Duffmusiq - Can You Dig It.mp3-9ac753c890a13ad04f61c91a5d54dad7.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://62vqapo3c6wd"
+path="res://.godot/imported/Encounter Studios - Japanese Power Phrases - Game Over.wav-c54dea0dd1a882724aedb7ea370d60de.sample"
+
+[deps]
+
+source_file="res://assets/sound/Upravené/Encounter Studios - Japanese Power Phrases - Game Over.wav"
+dest_files=["res://.godot/imported/Encounter Studios - Japanese Power Phrases - Game Over.wav-c54dea0dd1a882724aedb7ea370d60de.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
