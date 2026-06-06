@@ -25,19 +25,39 @@
 [ext_resource type="Texture2D" uid="uid://borkvfh0344a0" path="res://sprites/Sound On Icon.png" id="25_sound_on"]
 [ext_resource type="Texture2D" uid="uid://bpccvg78ye3vn" path="res://sprites/Music On Icon.png" id="27_music_on"]
 [ext_resource type="Texture2D" uid="uid://ce3f1236516cf" path="res://sprites/Audio Toggle Hitbox.png" id="29_audio_hitbox"]
+[ext_resource type="Shader" uid="uid://csnqnisp3bt8a" path="res://assets/shaders/progress_bar.gdshader" id="30_progshader"]
+[ext_resource type="Texture2D" uid="uid://b35aaphf6oafi" path="res://sprites/Minigame Panel.png" id="40_minipanel"]
+[ext_resource type="Texture2D" uid="uid://i80tvhg1tjnr" path="res://sprites/Minigame Option.png" id="41_minioption"]
+[ext_resource type="Texture2D" uid="uid://bjr78pxwxov4k" path="res://sprites/Minigame Option Selected.png" id="42_miniopt_sel"]
+[ext_resource type="FontFile" uid="uid://dv26f1y5gsi82" path="res://assets/fonts/Nunito-Regular.ttf" id="50_nunito"]
+[ext_resource type="Texture2D" uid="uid://bjwxyjcpppdy5" path="res://sprites/Menu Button.png" id="60_menubtn"]
+[ext_resource type="Texture2D" uid="uid://oycgt3006qwt" path="res://sprites/Menu Button Pressed.png" id="61_menubtn_pressed"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
-bg_color = Color(0, 0, 0, 0)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_progress"]
+shader = ExtResource("30_progshader")
+shader_parameter/progress = 0.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_fill"]
-bg_color = Color(1, 0.77, 0.04, 1)
-corner_radius_top_left = 13
-corner_radius_top_right = 13
-corner_radius_bottom_right = 13
-corner_radius_bottom_left = 13
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot"]
+bg_color = Color(0.07, 0.045, 0.02, 0.78)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.94, 0.78, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_special_panel"]
 bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="FontVariation" id="FontVariation_minigame_bold"]
+base_font = ExtResource("50_nunito")
+variation_embolden = 0.6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joke_sweet_spot"]
 bg_color = Color(0, 0.86, 0.04, 0.88)
@@ -70,6 +90,13 @@ expand_mode = 1
 stretch_mode = 6
 script = ExtResource("0_bgloop")
 
+[node name="BackgroundDim" type="ColorRect" parent="." unique_id=900100002]
+z_index = -9
+offset_right = 1152.0
+offset_bottom = 648.0
+mouse_filter = 2
+color = Color(0.039215688, 0.023529412, 0, 0.27450982)
+
 [node name="UI" type="CanvasLayer" parent="." unique_id=690210418]
 
 [node name="StaminaPanel" type="TextureButton" parent="UI" unique_id=1989804626]
@@ -77,11 +104,11 @@ offset_left = 20.0
 offset_top = 20.0
 offset_right = 190.0
 offset_bottom = 78.0
-texture_normal = ExtResource("22_factoption")
-texture_pressed = ExtResource("23_factoption_selected")
-texture_hover = ExtResource("23_factoption_selected")
+texture_normal = ExtResource("60_menubtn")
+texture_pressed = ExtResource("61_menubtn_pressed")
+texture_hover = ExtResource("60_menubtn")
 ignore_texture_size = true
-stretch_mode = 0
+stretch_mode = 5
 
 [node name="Label" type="Label" parent="UI/StaminaPanel" unique_id=937741568]
 visible = false
@@ -104,6 +131,7 @@ theme_override_font_sizes/font_size = 20
 text = "7/10"
 
 [node name="MenuText" type="Label" parent="UI/StaminaPanel" unique_id=1855134250]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -114,10 +142,6 @@ offset_right = -22.0
 offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
-theme_override_constants/outline_size = 7
-theme_override_font_sizes/font_size = 26
 text = "MENU"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -145,16 +169,15 @@ text = "lvl"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ProgressBar" type="ProgressBar" parent="UI/ProgressPanel" unique_id=195311488]
+[node name="ProgressBar" type="ColorRect" parent="UI/ProgressPanel" unique_id=195311488]
+material = SubResource("ShaderMaterial_progress")
 layout_mode = 0
-offset_left = 28.0
-offset_top = 78.0
-offset_right = 292.0
-offset_bottom = 103.0
-theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
-theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
-value = 50.0
-show_percentage = false
+offset_left = 25.0
+offset_top = 75.0
+offset_right = 293.0
+offset_bottom = 99.0
+mouse_filter = 2
+color = Color(1, 1, 1, 0.8666667)
 
 [node name="ProgressLabel" type="Label" parent="UI/ProgressPanel" unique_id=1449641986]
 visible = false
@@ -185,43 +208,99 @@ offset_bottom = 38.0
 theme_override_font_sizes/font_size = 20
 text = "Invent"
 
-[node name="Slot1" type="TextureRect" parent="UI/InventoryPanel" unique_id=2010000001]
+[node name="Slot1" type="Panel" parent="UI/InventoryPanel" unique_id=2010000001]
 layout_mode = 0
-offset_left = 51.0
-offset_top = 62.0
-offset_right = 173.0
-offset_bottom = 108.0
-mouse_filter = 0
+offset_left = 39.0
+offset_top = 51.0
+offset_right = 185.0
+offset_bottom = 114.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
+
+[node name="Icon" type="TextureRect" parent="UI/InventoryPanel/Slot1" unique_id=51738870]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 3.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Slot2" type="TextureRect" parent="UI/InventoryPanel" unique_id=2010000002]
+[node name="Slot2" type="Panel" parent="UI/InventoryPanel" unique_id=2010000002]
 layout_mode = 0
-offset_left = 50.0
-offset_top = 128.0
-offset_right = 172.0
-offset_bottom = 172.0
-mouse_filter = 0
+offset_left = 39.0
+offset_top = 117.0
+offset_right = 185.0
+offset_bottom = 180.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
+
+[node name="Icon" type="TextureRect" parent="UI/InventoryPanel/Slot2" unique_id=689500265]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 5.0
+offset_right = -3.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Slot3" type="TextureRect" parent="UI/InventoryPanel" unique_id=2010000003]
+[node name="Slot3" type="Panel" parent="UI/InventoryPanel" unique_id=2010000003]
 layout_mode = 0
-offset_left = 48.0
-offset_top = 189.0
-offset_right = 173.0
-offset_bottom = 238.0
-mouse_filter = 0
+offset_left = 39.0
+offset_top = 183.0
+offset_right = 185.0
+offset_bottom = 246.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
+
+[node name="Icon" type="TextureRect" parent="UI/InventoryPanel/Slot3" unique_id=1987644066]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Slot4" type="TextureRect" parent="UI/InventoryPanel" unique_id=2010000004]
+[node name="Slot4" type="Panel" parent="UI/InventoryPanel" unique_id=2010000004]
 layout_mode = 0
-offset_left = 53.0
-offset_top = 254.0
-offset_right = 171.0
-offset_bottom = 300.0
-mouse_filter = 0
+offset_left = 39.0
+offset_top = 249.0
+offset_right = 185.0
+offset_bottom = 312.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_slot")
+
+[node name="Icon" type="TextureRect" parent="UI/InventoryPanel/Slot4" unique_id=925566993]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
@@ -289,7 +368,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("21_specialpanel")
+texture = ExtResource("40_minipanel")
 expand_mode = 1
 stretch_mode = 5
 
@@ -302,9 +381,10 @@ offset_top = 78.0
 offset_right = -64.0
 offset_bottom = 136.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
 theme_override_constants/outline_size = 10
+theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 22
 text = "Press SPACE when the white line is in the green zone!"
 horizontal_alignment = 1
@@ -357,38 +437,40 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_joke_cursor")
 
 [node name="QuestionManager" type="Node2D" parent="UI" unique_id=209413272]
 z_index = 100
+position = Vector2(578, 307)
 script = ExtResource("11_quesm")
 
-[node name="InstructionLabel" type="Label" parent="UI/QuestionManager" unique_id=616218599]
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 241.0
-offset_top = 120.0
-offset_right = 867.0
-offset_bottom = 175.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 40
-text = "Select a group to ask a question!"
+[node name="QteCenterLabel" type="Label" parent="UI/QuestionManager" unique_id=550100100]
+z_index = 150
+offset_left = -220.0
+offset_top = -170.0
+offset_right = 220.0
+offset_bottom = 170.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
+theme_override_constants/outline_size = 22
+theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
+theme_override_font_sizes/font_size = 220
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="GroupLeftButton" type="TextureButton" parent="UI/QuestionManager" unique_id=550039255]
-offset_left = 104.0
-offset_top = 114.0
-offset_right = 396.0
-offset_bottom = 515.0
+offset_left = -473.0
+offset_top = -215.0
+offset_right = -161.0
+offset_bottom = 250.0
 
 [node name="GroupCenterButton" type="TextureButton" parent="UI/QuestionManager" unique_id=999334281]
-offset_left = 350.0
-offset_top = 195.0
-offset_right = 560.0
-offset_bottom = 470.0
+offset_left = -88.0
+offset_top = -111.0
+offset_right = 129.0
+offset_bottom = 263.0
 
 [node name="GroupRightButton" type="TextureButton" parent="UI/QuestionManager" unique_id=1522589690]
-offset_left = 640.0
-offset_top = 195.0
-offset_right = 850.0
-offset_bottom = 470.0
+offset_left = 188.0
+offset_top = -177.0
+offset_right = 376.0
+offset_bottom = 275.0
 
 [node name="FunFactMinigamePanel" type="Panel" parent="UI" unique_id=355310120]
 visible = false
@@ -414,7 +496,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("21_specialpanel")
+texture = ExtResource("40_minipanel")
 expand_mode = 1
 stretch_mode = 5
 
@@ -427,9 +509,10 @@ offset_top = 40.0
 offset_right = -70.0
 offset_bottom = 96.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
 theme_override_constants/outline_size = 10
+theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 34
 text = "Pick the most interesting fun fact!"
 horizontal_alignment = 1
@@ -452,9 +535,9 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-texture_normal = ExtResource("22_factoption")
-texture_pressed = ExtResource("23_factoption_selected")
-texture_hover = ExtResource("23_factoption_selected")
+texture_normal = ExtResource("41_minioption")
+texture_pressed = ExtResource("42_miniopt_sel")
+texture_hover = ExtResource("42_miniopt_sel")
 ignore_texture_size = true
 stretch_mode = 0
 
@@ -469,9 +552,10 @@ offset_right = -52.0
 offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
 theme_override_constants/outline_size = 4
+theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 13
 text = "Fact 1"
 horizontal_alignment = 1
@@ -482,9 +566,9 @@ autowrap_mode = 3
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-texture_normal = ExtResource("22_factoption")
-texture_pressed = ExtResource("23_factoption_selected")
-texture_hover = ExtResource("23_factoption_selected")
+texture_normal = ExtResource("41_minioption")
+texture_pressed = ExtResource("42_miniopt_sel")
+texture_hover = ExtResource("42_miniopt_sel")
 ignore_texture_size = true
 stretch_mode = 0
 
@@ -499,9 +583,10 @@ offset_right = -52.0
 offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
 theme_override_constants/outline_size = 4
+theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 13
 text = "Fact 2"
 horizontal_alignment = 1
@@ -512,9 +597,9 @@ autowrap_mode = 3
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-texture_normal = ExtResource("22_factoption")
-texture_pressed = ExtResource("23_factoption_selected")
-texture_hover = ExtResource("23_factoption_selected")
+texture_normal = ExtResource("41_minioption")
+texture_pressed = ExtResource("42_miniopt_sel")
+texture_hover = ExtResource("42_miniopt_sel")
 ignore_texture_size = true
 stretch_mode = 0
 
@@ -529,9 +614,10 @@ offset_right = -52.0
 offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
 theme_override_constants/outline_size = 4
+theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 13
 text = "Fact 3"
 horizontal_alignment = 1
@@ -550,9 +636,10 @@ offset_right = -70.0
 offset_bottom = -38.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
 theme_override_constants/outline_size = 6
+theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -582,7 +669,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("21_specialpanel")
+texture = ExtResource("40_minipanel")
 expand_mode = 1
 stretch_mode = 5
 
@@ -595,9 +682,10 @@ offset_top = 40.0
 offset_right = -70.0
 offset_bottom = 96.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
 theme_override_constants/outline_size = 10
+theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 36
 text = "Press SPACE to stop the wheel!"
 horizontal_alignment = 1
@@ -633,9 +721,10 @@ offset_right = -70.0
 offset_bottom = -90.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
 theme_override_constants/outline_size = 8
+theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 22
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -652,9 +741,10 @@ offset_right = -70.0
 offset_bottom = -42.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0.15, 0.065, 0.015, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
 theme_override_constants/outline_size = 6
+theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -938,35 +1028,71 @@ scale = Vector2(0.5, 0.5)
 [node name="Student1" type="Node2D" parent="Characters/Students" unique_id=1846185161]
 position = Vector2(788, 432)
 script = ExtResource("12_student")
+wasted_sticker_offset = null
+wasted_sticker_scale = null
+wasted_sticker_rotation_jitter_deg = null
+editor_preview_wasted = null
 
 [node name="Student2" type="Node2D" parent="Characters/Students" unique_id=278711386]
 position = Vector2(590, 636)
 script = ExtResource("12_student")
+wasted_sticker_offset = null
+wasted_sticker_scale = null
+wasted_sticker_rotation_jitter_deg = null
+editor_preview_wasted = null
 
 [node name="Student3" type="Node2D" parent="Characters/Students" unique_id=865034165]
 position = Vector2(380, 874)
 script = ExtResource("12_student")
+wasted_sticker_offset = null
+wasted_sticker_scale = null
+wasted_sticker_rotation_jitter_deg = null
+editor_preview_wasted = null
 
 [node name="Student4" type="Node2D" parent="Characters/Students" unique_id=488921422]
 position = Vector2(1272, 498)
 script = ExtResource("12_student")
+wasted_sticker_offset = null
+wasted_sticker_scale = null
+wasted_sticker_rotation_jitter_deg = null
+editor_preview_wasted = null
 
 [node name="Student5" type="Node2D" parent="Characters/Students" unique_id=652384350]
 position = Vector2(1022, 652)
 script = ExtResource("12_student")
+wasted_sticker_offset = null
+wasted_sticker_scale = null
+wasted_sticker_rotation_jitter_deg = null
+editor_preview_wasted = null
 
 [node name="Student6" type="Node2D" parent="Characters/Students" unique_id=244854477]
 position = Vector2(1032, 916)
 script = ExtResource("12_student")
+wasted_sticker_offset = null
+wasted_sticker_scale = null
+wasted_sticker_rotation_jitter_deg = null
+editor_preview_wasted = null
 
 [node name="Student7" type="Node2D" parent="Characters/Students" unique_id=1000445286]
 position = Vector2(1598, 438)
 script = ExtResource("12_student")
+wasted_sticker_offset = null
+wasted_sticker_scale = null
+wasted_sticker_rotation_jitter_deg = null
+editor_preview_wasted = null
 
 [node name="Student8" type="Node2D" parent="Characters/Students" unique_id=1287793938]
-position = Vector2(1794, 688)
+position = Vector2(1794, 700)
 script = ExtResource("12_student")
+wasted_sticker_offset = null
+wasted_sticker_scale = null
+wasted_sticker_rotation_jitter_deg = null
+editor_preview_wasted = null
 
 [node name="Student9" type="Node2D" parent="Characters/Students" unique_id=132474642]
-position = Vector2(1636, 982)
+position = Vector2(1656, 970)
 script = ExtResource("12_student")
+wasted_sticker_offset = null
+wasted_sticker_scale = null
+wasted_sticker_rotation_jitter_deg = null
+editor_preview_wasted = null

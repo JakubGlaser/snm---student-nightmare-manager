@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="SNM - student nightmare manager"
-run/main_scene="res://MainScene.tscn"
+run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Game="*res://GameManager.gd"
 
 [display]
 

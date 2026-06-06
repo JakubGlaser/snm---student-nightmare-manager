@@ -2,8 +2,21 @@ extends Panel
 
 signal funfact_finished(success: bool)
 
-const FACT_OPTION_TEXTURE := preload("res://sprites/Special Ability Option.png")
-const FACT_OPTION_SELECTED_TEXTURE := preload("res://sprites/Special Ability Option Selected.png")
+const FACT_OPTION_TEXTURE := preload("res://sprites/Minigame Option.png")
+const FACT_OPTION_SELECTED_TEXTURE := preload("res://sprites/Minigame Option Selected.png")
+
+const EVAL_GREEN := Color(0.10, 0.38, 0.13)  # dark forest
+const EVAL_RED := Color(0.55, 0.12, 0.12)   # dark wine
+const SCENE_OUTLINE_SIZE := 6                # matches what surgical edit applied
+
+func _set_eval_style(label: Label, color: Color) -> void:
+	label.add_theme_color_override("font_color", color)
+	# Remove cream outline so the dark text reads cleanly
+	label.add_theme_constant_override("outline_size", 0)
+
+func _reset_eval_style(label: Label) -> void:
+	label.remove_theme_color_override("font_color")
+	label.add_theme_constant_override("outline_size", SCENE_OUTLINE_SIZE)
 
 # Each entry: { "fact": "...", "is_fun": true/false }
 # We store them grouped: fun facts and boring facts
@@ -87,7 +100,7 @@ func _ready():
 func start_minigame():
 	visible = true
 	result_label.text = ""
-	result_label.remove_theme_color_override("font_color")
+	_reset_eval_style(result_label)
 	title_label.text = "Pick the most interesting fun fact!"
 	
 	get_tree().paused = true
@@ -171,17 +184,17 @@ func _on_fact_chosen(index: int):
 	for i in range(3):
 		if current_facts[i]["is_fun"]:
 			buttons[i].texture_normal = FACT_OPTION_SELECTED_TEXTURE
-			labels[i].add_theme_color_override("font_color", Color(0.45, 1.0, 0.45))
+			_set_eval_style(labels[i], EVAL_GREEN)
 		else:
 			buttons[i].modulate = Color(0.55, 0.55, 0.55)
-			labels[i].add_theme_color_override("font_color", Color(0.72, 0.72, 0.72))
-	
+			labels[i].add_theme_color_override("font_color", Color(0.45, 0.45, 0.45))
+
 	if success:
 		result_label.text = "Great pick! Students are engaged! (+15% Focus)"
-		result_label.add_theme_color_override("font_color", Color.GREEN)
+		_set_eval_style(result_label, EVAL_GREEN)
 	else:
 		result_label.text = "That was boring... Students lost interest. (-10% Focus)"
-		result_label.add_theme_color_override("font_color", Color.RED)
+		_set_eval_style(result_label, EVAL_RED)
 	
 	# Wait then close
 	var timer = get_tree().create_timer(2.0)
@@ -194,7 +207,7 @@ func _on_result_timeout(success: bool):
 	for i in range(3):
 		buttons[i].texture_normal = FACT_OPTION_TEXTURE
 		buttons[i].modulate = Color.WHITE
-		labels[i].remove_theme_color_override("font_color")
+		_reset_eval_style(labels[i])
 	
 	visible = false
 	get_tree().paused = false

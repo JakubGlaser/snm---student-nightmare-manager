@@ -70,7 +70,7 @@ const ITEMS := [
 @export var level_duration: float = 120.0 # 2 minutes in seconds
 var current_time: float = 0.0
 
-@onready var progress_bar: ProgressBar = $UI/ProgressPanel/ProgressBar
+@onready var progress_bar: ColorRect = $UI/ProgressPanel/ProgressBar
 @onready var stamina_value_label: Label = $UI/StaminaPanel/Value
 @onready var menu_button: TextureButton = $UI/StaminaPanel
 @onready var menu_input_blocker: ColorRect = $MenuLayer/MenuInputBlocker
@@ -146,9 +146,7 @@ func _ready():
 	music_toggle_button.pressed.connect(_on_music_toggle_pressed)
 	_update_audio_toggle_icons()
 	
-	progress_bar.min_value = 0
-	progress_bar.max_value = level_duration
-	progress_bar.value = 0
+	_set_progress(0.0)
 	displayed_progress_time = 0.0
 	
 	total_students = students_node.get_child_count()
@@ -199,23 +197,33 @@ func _ready():
 func _build_inventory_slots():
 	inventory_icon_nodes.clear()
 
-	var slots: Array[TextureRect] = []
+	# Each slot is a Panel with a child TextureRect named "Icon". The Panel
+	# always shows the styled frame; the Icon shows the item texture when
+	# something is held.
+	var panels: Array[Panel] = []
 	for child in inventory_panel.get_children():
-		if child is TextureRect and String(child.name).begins_with("Slot"):
-			slots.append(child)
-	slots.sort_custom(func(a, b): return String(a.name).naturalnocasecmp_to(String(b.name)) < 0)
-	max_inventory_items = slots.size()
+		if child is Panel and String(child.name).begins_with("Slot"):
+			panels.append(child)
+	panels.sort_custom(func(a, b): return String(a.name).naturalnocasecmp_to(String(b.name)) < 0)
+	max_inventory_items = panels.size()
 
-	for i in range(slots.size()):
-		var icon: TextureRect = slots[i]
-		icon.pivot_offset = icon.size * 0.5
+	for i in range(panels.size()):
+		var slot: Panel = panels[i]
+		slot.mouse_filter = Control.MOUSE_FILTER_STOP
+		slot.mouse_entered.connect(_on_inventory_item_mouse_entered.bind(i))
+		slot.mouse_exited.connect(_on_inventory_item_mouse_exited.bind(i))
+		slot.gui_input.connect(_on_inventory_item_gui_input.bind(i))
+
+		var icon: TextureRect = slot.get_node("Icon") as TextureRect
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		icon.mouse_filter = Control.MOUSE_FILTER_STOP
-		icon.mouse_entered.connect(_on_inventory_item_mouse_entered.bind(i))
-		icon.mouse_exited.connect(_on_inventory_item_mouse_exited.bind(i))
-		icon.gui_input.connect(_on_inventory_item_gui_input.bind(i))
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon.pivot_offset = icon.size * 0.5
 		inventory_icon_nodes.append(icon)
+
+func _set_progress(p: float) -> void:
+	if progress_bar and progress_bar.material:
+		progress_bar.material.set_shader_parameter("progress", clampf(p, 0.0, 1.0))
 
 func _build_item_bubbles():
 	item_hover_bubble = _create_text_bubble(Vector2(650, 190), Vector2(245, 82), 15)
@@ -356,10 +364,10 @@ func _process(delta: float):
 	if current_time < level_duration:
 		current_time += delta
 		displayed_progress_time = lerp(displayed_progress_time, current_time, min(delta * 8.0, 1.0))
-		progress_bar.value = displayed_progress_time
-		
+		_set_progress(displayed_progress_time / level_duration)
+
 		if current_time >= level_duration:
-			progress_bar.value = level_duration
+			_set_progress(1.0)
 			level_complete()
 			
 	if current_joke_cooldown > 0:
@@ -384,14 +392,13 @@ func _is_any_minigame_open() -> bool:
 	return menu_panel.visible or joke_minigame_panel.visible or funfact_minigame_panel.visible or special_wheel_panel.visible or question_manager.is_selecting or question_manager.is_qte_active
 
 func _on_menu_button_pressed():
-	if menu_panel.visible:
-		_close_menu()
+	# The MENU button now hands off to the separate MainMenu scene managed by
+	# the GameManager autoload. The legacy in-scene MenuPanel is no longer used.
+	if Engine.has_singleton("Game") or get_node_or_null("/root/Game"):
+		Game.return_to_menu_from_game()
 	else:
-		was_paused_before_menu = get_tree().paused
-		menu_input_blocker.visible = true
-		menu_panel.visible = true
-		_set_gameplay_buttons_blocked(true)
-		get_tree().paused = true
+		# Fallback for running this scene standalone in the editor.
+		get_tree().paused = not get_tree().paused
 
 func _close_menu():
 	menu_panel.visible = false
@@ -497,7 +504,7 @@ func level_complete():
 	current_level += 1
 	current_time = 0.0
 	displayed_progress_time = 0.0
-	progress_bar.value = 0.0
+	_set_progress(0.0)
 	start_new_level()
 
 func _on_joke_button_pressed():

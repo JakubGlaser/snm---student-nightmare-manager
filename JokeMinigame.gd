@@ -12,10 +12,22 @@ signal joke_finished(success: bool)
 @onready var cursor = $BackgroundBar/Cursor
 @onready var instruction_label = $InstructionLabel
 
+const EVAL_GREEN := Color(0.10, 0.38, 0.13)
+const EVAL_RED := Color(0.55, 0.12, 0.12)
+const SCENE_OUTLINE_SIZE := 6
+
 var is_playing: bool = false
 var cursor_direction: int = 1
 var bar_width: float = 0.0
 var sweet_spot_tween: Tween
+
+func _set_eval_style(label: Label, color: Color) -> void:
+	label.add_theme_color_override("font_color", color)
+	label.add_theme_constant_override("outline_size", 0)
+
+func _reset_eval_style(label: Label) -> void:
+	label.remove_theme_color_override("font_color")
+	label.add_theme_constant_override("outline_size", SCENE_OUTLINE_SIZE)
 
 func _ready():
 	visible = false
@@ -56,6 +68,7 @@ func start_minigame():
 	cursor.size.x = 8
 	cursor.size.y = background_bar.size.y
 	cursor_direction = 1
+	_reset_eval_style(instruction_label)
 	instruction_label.text = "Press SPACE when the white line is in the green zone!"
 
 func _process(delta: float):
@@ -93,8 +106,10 @@ func check_win_condition():
 	if cursor_center >= ss_start and cursor_center <= ss_end:
 		success = true
 		instruction_label.text = "NAILED IT! (+20% Focus)"
+		_set_eval_style(instruction_label, EVAL_GREEN)
 	else:
 		instruction_label.text = "MISSED! (-10% Focus)"
+		_set_eval_style(instruction_label, EVAL_RED)
 		
 	# Wait a short moment so the player sees the result, then end
 	var timer = get_tree().create_timer(1.0, true)

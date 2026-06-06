@@ -5,3 +5,8 @@
 # Local-only sprite backups created during UI swaps
 sprites/_backup_*/
 sprites/_original_backup/
+
+# Krita working files / autosaves
+*.kra
+*.kra~
+*-autosave.kra

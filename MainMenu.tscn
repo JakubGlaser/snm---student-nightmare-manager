@@ -1,0 +1,114 @@
+[gd_scene format=3 uid="uid://b3xvk5pq7rjm1"]
+
+[ext_resource type="Script" path="res://MainMenu.gd" id="1_menuscript"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Menu Background.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Title.png" id="3_title"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Play.png" id="4_play"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Play Pressed.png" id="5_play_p"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Continue.png" id="6_cont"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Continue Pressed.png" id="7_cont_p"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Settings.png" id="8_sett"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Settings Pressed.png" id="9_sett_p"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Exit.png" id="10_exit"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Exit Pressed.png" id="11_exit_p"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Version Badge.png" id="12_ver"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Music Toggle Menu.png" id="13_music"]
+[ext_resource type="Texture2D" path="res://sprites/menu/Sound Toggle Menu.png" id="14_sound"]
+
+[node name="MainMenu" type="Node2D"]
+script = ExtResource("1_menuscript")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Background" type="TextureRect" parent="UI"]
+offset_right = 1152.0
+offset_bottom = 648.0
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Title" type="TextureRect" parent="UI"]
+offset_left = 76.0
+offset_top = 20.0
+offset_right = 1076.0
+offset_bottom = 260.0
+mouse_filter = 2
+texture = ExtResource("3_title")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Buttons" type="HBoxContainer" parent="UI"]
+offset_left = 50.0
+offset_top = 330.0
+offset_right = 1102.0
+offset_bottom = 450.0
+theme_override_constants/separation = 25
+alignment = 1
+
+[node name="PlayButton" type="TextureButton" parent="UI/Buttons"]
+custom_minimum_size = Vector2(240, 100)
+layout_mode = 2
+texture_normal = ExtResource("4_play")
+texture_pressed = ExtResource("5_play_p")
+texture_hover = ExtResource("4_play")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ContinueButton" type="TextureButton" parent="UI/Buttons"]
+custom_minimum_size = Vector2(240, 100)
+layout_mode = 2
+texture_normal = ExtResource("6_cont")
+texture_pressed = ExtResource("7_cont_p")
+texture_hover = ExtResource("6_cont")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="SettingsButton" type="TextureButton" parent="UI/Buttons"]
+custom_minimum_size = Vector2(240, 100)
+layout_mode = 2
+texture_normal = ExtResource("8_sett")
+texture_pressed = ExtResource("9_sett_p")
+texture_hover = ExtResource("8_sett")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ExitButton" type="TextureButton" parent="UI/Buttons"]
+custom_minimum_size = Vector2(240, 100)
+layout_mode = 2
+texture_normal = ExtResource("10_exit")
+texture_pressed = ExtResource("11_exit_p")
+texture_hover = ExtResource("10_exit")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="VersionBadge" type="TextureRect" parent="UI"]
+offset_left = 40.0
+offset_top = 558.0
+offset_right = 230.0
+offset_bottom = 628.0
+mouse_filter = 2
+texture = ExtResource("12_ver")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AudioToggles" type="HBoxContainer" parent="UI"]
+offset_left = 980.0
+offset_top = 568.0
+offset_right = 1112.0
+offset_bottom = 628.0
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="MusicToggle" type="TextureRect" parent="UI/AudioToggles"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture = ExtResource("13_music")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SoundToggle" type="TextureRect" parent="UI/AudioToggles"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+texture = ExtResource("14_sound")
+expand_mode = 1
+stretch_mode = 5

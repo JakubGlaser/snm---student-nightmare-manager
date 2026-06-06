@@ -2,8 +2,15 @@ extends Control
 
 signal wheel_finished(result: String)
 
-const OPTION_TEXTURE := preload("res://sprites/Special Ability Option.png")
-const OPTION_SELECTED_TEXTURE := preload("res://sprites/Special Ability Option Selected.png")
+const OPTION_TEXTURE := preload("res://sprites/Minigame Option.png")
+const OPTION_SELECTED_TEXTURE := preload("res://sprites/Minigame Option Selected.png")
+const PROJECT_FONT := preload("res://assets/fonts/Nunito-Regular.ttf")
+
+func _make_bold_font() -> FontVariation:
+	var fv := FontVariation.new()
+	fv.base_font = PROJECT_FONT
+	fv.variation_embolden = 0.6
+	return fv
 
 const ABILITIES := [
 	{
@@ -109,9 +116,10 @@ func _build_option_rows():
 		label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		label.add_theme_color_override("font_color", Color.WHITE)
-		label.add_theme_color_override("font_outline_color", Color(0.15, 0.065, 0.015))
-		label.add_theme_constant_override("outline_size", 8)
+		label.add_theme_font_override("font", _make_bold_font())
+		label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
+		label.add_theme_color_override("font_outline_color", Color(1, 0.94, 0.78, 1))
+		label.add_theme_constant_override("outline_size", 4)
 		label.add_theme_font_size_override("font_size", 20)
 		label.text = ability["title"]
 		
