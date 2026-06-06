@@ -12,9 +12,9 @@ signal joke_finished(success: bool)
 @onready var cursor = $BackgroundBar/Cursor
 @onready var instruction_label = $InstructionLabel
 
-const EVAL_GREEN := Color(0.10, 0.38, 0.13)
-const EVAL_RED := Color(0.55, 0.12, 0.12)
-const SCENE_OUTLINE_SIZE := 6
+const EVAL_GREEN := Color(0.55, 0.95, 0.45)
+const EVAL_RED := Color(1.0, 0.5, 0.45)
+const SCENE_OUTLINE_SIZE := 0
 
 var is_playing: bool = false
 var cursor_direction: int = 1
@@ -34,19 +34,24 @@ func _ready():
 	# Ensure this runs even when the SceneTree is paused
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
-func start_minigame():
+func start_minigame(diff: float = 0.0):
 	visible = true
 	is_playing = true
-	
+
 	# Pause the entire game so students stop decaying and the level timer stops
 	get_tree().paused = true
-	
+
 	bar_width = background_bar.size.x
-	
+
+	# Difficulty scaling: faster cursor and a smaller sweet spot at higher levels.
+	cursor_speed = lerp(430.0, 780.0, diff)
+	var ss_min = lerp(120.0, 55.0, diff)
+	var ss_max = lerp(190.0, 90.0, diff)
+
 	# Setup SweetSpot
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
-	var sweet_spot_width = rng.randf_range(sweet_spot_min_width, sweet_spot_max_width)
+	var sweet_spot_width = rng.randf_range(ss_min, ss_max)
 	var min_x = 0.0
 	var max_x = bar_width - sweet_spot_width
 	var target_x = rng.randf_range(min_x, max_x)
@@ -69,7 +74,7 @@ func start_minigame():
 	cursor.size.y = background_bar.size.y
 	cursor_direction = 1
 	_reset_eval_style(instruction_label)
-	instruction_label.text = "Press SPACE when the white line is in the green zone!"
+	instruction_label.text = "Press SPACE when the white line lands in the bright zone!"
 
 func _process(delta: float):
 	if not is_playing:

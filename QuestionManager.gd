@@ -68,6 +68,10 @@ func start_question():
 	if is_selecting or is_qte_active:
 		return
 
+	# Tighten the reaction window as difficulty climbs (2.2s at L1 -> 0.85s at L10+).
+	var diff = main_scene.get_difficulty01() if main_scene.has_method("get_difficulty01") else 0.0
+	max_qte_time = lerp(2.2, 0.85, diff)
+
 	# Pause ALL student decay
 	for student in students_node.get_children():
 		if student.has_method("set_decay_paused"):
@@ -108,7 +112,8 @@ func _on_group_selected(group_name: String):
 			if s.is_active:
 				active_group_students.append(s)
 				if s.has_method("add_bonus_focus"):
-					var bonus = 30.0 * main_scene.action_multiplier
+					var diff = main_scene.get_difficulty01() if main_scene.has_method("get_difficulty01") else 0.0
+					var bonus = lerp(30.0, 42.0, diff) * main_scene.action_multiplier
 					s.add_bonus_focus(bonus)
 
 	if active_group_students.is_empty():
@@ -187,3 +192,7 @@ func end_question():
 			student.set_decay_paused(false)
 
 	active_group_students.clear()
+
+	# Start the question cooldown now that the round is over.
+	if main_scene.has_method("on_question_completed"):
+		main_scene.on_question_completed()

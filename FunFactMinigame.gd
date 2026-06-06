@@ -2,14 +2,15 @@ extends Panel
 
 signal funfact_finished(success: bool)
 
-const FACT_OPTION_TEXTURE := preload("res://sprites/Minigame Option.png")
-const FACT_OPTION_SELECTED_TEXTURE := preload("res://sprites/Minigame Option Selected.png")
-
-const EVAL_GREEN := Color(0.10, 0.38, 0.13)
-const EVAL_RED  := Color(0.55, 0.12, 0.12)
-const COLOR_DEFAULT := Color(0.11, 0.055, 0.02, 1.0)
-const COLOR_OUTLINE := Color(1.0, 0.94, 0.78, 0.55)
-const SCENE_OUTLINE_SIZE := 4
+# Chalkboard look: options are plain white "chalk" text (no button frame) that
+# turn chalk-yellow on hover. Eval colors are bright so they read on the dark
+# green board.
+const EVAL_GREEN := Color(0.55, 0.95, 0.45, 1.0)
+const EVAL_RED  := Color(1.0, 0.5, 0.45, 1.0)
+const COLOR_DEFAULT := Color(1.0, 1.0, 1.0, 1.0)
+const COLOR_HOVER := Color(1.0, 0.85, 0.2, 1.0)
+const COLOR_DIM := Color(0.5, 0.5, 0.5, 1.0)
+const SCENE_OUTLINE_SIZE := 0
 
 func _set_eval_style(label: Label, color: Color) -> void:
 	label.add_theme_color_override("font_color", color)
@@ -18,7 +19,7 @@ func _set_eval_style(label: Label, color: Color) -> void:
 
 func _reset_eval_style(label: Label) -> void:
 	label.add_theme_color_override("font_color", COLOR_DEFAULT)
-	label.add_theme_color_override("font_outline_color", COLOR_OUTLINE)
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0))
 	label.add_theme_constant_override("outline_size", SCENE_OUTLINE_SIZE)
 
 # Each entry: { "fact": "...", "is_fun": true/false }
@@ -95,10 +96,32 @@ var used_boring_facts: Array = []
 func _ready():
 	visible = false
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	
+
 	fact_button_1.pressed.connect(_on_fact_chosen.bind(0))
 	fact_button_2.pressed.connect(_on_fact_chosen.bind(1))
 	fact_button_3.pressed.connect(_on_fact_chosen.bind(2))
+
+	# Borderless options: drop the old button frame and wire chalk-yellow hover.
+	var buttons = [fact_button_1, fact_button_2, fact_button_3]
+	for i in range(3):
+		buttons[i].texture_normal = null
+		buttons[i].texture_hover = null
+		buttons[i].texture_pressed = null
+		buttons[i].mouse_entered.connect(_on_fact_hover.bind(i))
+		buttons[i].mouse_exited.connect(_on_fact_unhover.bind(i))
+
+func _on_fact_hover(index: int) -> void:
+	# Ignore hover once a choice has locked the eval colors in.
+	if fact_button_1.disabled:
+		return
+	var labels = [fact_label_1, fact_label_2, fact_label_3]
+	labels[index].add_theme_color_override("font_color", COLOR_HOVER)
+
+func _on_fact_unhover(index: int) -> void:
+	if fact_button_1.disabled:
+		return
+	var labels = [fact_label_1, fact_label_2, fact_label_3]
+	labels[index].add_theme_color_override("font_color", COLOR_DEFAULT)
 
 func start_minigame():
 	visible = true
@@ -113,9 +136,6 @@ func start_minigame():
 	var buttons = [fact_button_1, fact_button_2, fact_button_3]
 	var labels = [fact_label_1, fact_label_2, fact_label_3]
 	for i in range(3):
-		buttons[i].texture_normal = FACT_OPTION_TEXTURE
-		buttons[i].texture_hover = FACT_OPTION_SELECTED_TEXTURE
-		buttons[i].texture_pressed = FACT_OPTION_SELECTED_TEXTURE
 		buttons[i].modulate = Color.WHITE
 		buttons[i].disabled = false
 		labels[i].modulate = Color.WHITE
@@ -182,16 +202,13 @@ func _on_fact_chosen(index: int):
 	fact_button_2.disabled = true
 	fact_button_3.disabled = true
 	
-	# Highlight the correct answer
-	var buttons = [fact_button_1, fact_button_2, fact_button_3]
+	# Highlight the correct answer in green; dim the wrong ones.
 	var labels = [fact_label_1, fact_label_2, fact_label_3]
 	for i in range(3):
 		if current_facts[i]["is_fun"]:
-			buttons[i].texture_normal = FACT_OPTION_SELECTED_TEXTURE
 			_set_eval_style(labels[i], EVAL_GREEN)
 		else:
-			buttons[i].modulate = Color(0.55, 0.55, 0.55)
-			labels[i].add_theme_color_override("font_color", Color(0.45, 0.45, 0.45))
+			_set_eval_style(labels[i], COLOR_DIM)
 
 	if success:
 		result_label.text = "Great pick! Students are engaged! (+15% Focus)"
@@ -205,29 +222,28 @@ func _on_fact_chosen(index: int):
 	timer.timeout.connect(_on_result_timeout.bind(success))
 
 func _on_result_timeout(success: bool):
-	# Reset button colors
+	# Reset chalk colors back to white for next time.
 	var buttons = [fact_button_1, fact_button_2, fact_button_3]
 	var labels = [fact_label_1, fact_label_2, fact_label_3]
 	for i in range(3):
-		buttons[i].texture_normal = FACT_OPTION_TEXTURE
 		buttons[i].modulate = Color.WHITE
 		_reset_eval_style(labels[i])
-	
+
 	visible = false
 	get_tree().paused = false
 	funfact_finished.emit(success)
 
 func _fit_fact_label(label: Label, text: String):
-	var font_size := 15
+	var font_size := 24
 	if text.length() > 118:
-		font_size = 10
+		font_size = 16
 	elif text.length() > 105:
-		font_size = 11
+		font_size = 17
 	elif text.length() > 82:
-		font_size = 12
+		font_size = 19
 	elif text.length() > 62:
-		font_size = 13
+		font_size = 21
 	elif text.length() > 46:
-		font_size = 14
-	
+		font_size = 22
+
 	label.add_theme_font_size_override("font_size", font_size)

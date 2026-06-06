@@ -59,13 +59,26 @@ var focus_decay_rate: float = 1.0
 var is_active: bool = true
 var bonus_focus: float = 0.0
 var decay_paused: bool = false
+# Extra decay (focus/sec) inflicted when a classmate in the same group (the same
+# question zone) has lost focus. Set by MainScene; persists across levels (dead
+# groupmates stay dead).
+var row_decay_penalty: float = 0.0
 
 signal student_died
 
 var focus_label: Label
 var wasted_sticker: Sprite2D = null
+var _syncing_from_node: bool = false
 
 func _ready() -> void:
+	# Reconnect to a WastedSticker node that was previously saved as part of the scene.
+	if wasted_sticker == null or not is_instance_valid(wasted_sticker):
+		var existing: Node = find_child("WastedSticker", false, false)
+		if existing is Sprite2D:
+			wasted_sticker = existing as Sprite2D
+			if not (Engine.is_editor_hint() and editor_preview_wasted):
+				wasted_sticker.hide()
+
 	focus_label = Label.new()
 	focus_label.add_theme_font_override("font", PROJECT_FONT)
 	focus_label.add_theme_font_size_override("font_size", 20)
@@ -115,6 +128,9 @@ func add_bonus_focus(amount: float) -> void:
 func set_decay_paused(paused: bool) -> void:
 	decay_paused = paused
 
+func set_row_decay_penalty(value: float) -> void:
+	row_decay_penalty = value
+
 func set_focus_override(value: float) -> void:
 	if not is_active: return
 	focus = value
@@ -137,17 +153,28 @@ func modify_focus(amount: float) -> void:
 
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
+		# Sync position/scale changes the user made by dragging back into export vars.
+		if editor_preview_wasted and wasted_sticker != null and is_instance_valid(wasted_sticker):
+			var center := Vector2(bar_width / 2.0, bar_height / 2.0)
+			var node_offset := wasted_sticker.position - center
+			var node_scale := wasted_sticker.scale.x
+			if node_offset.distance_to(wasted_sticker_offset) > 0.5 or absf(node_scale - wasted_sticker_scale) > 0.001:
+				_syncing_from_node = true
+				wasted_sticker_offset = node_offset
+				wasted_sticker_scale = node_scale
+				_syncing_from_node = false
 		return
 	if not is_active or decay_paused:
 		return
+	var effective_decay_rate = focus_decay_rate + row_decay_penalty
 	if bonus_focus > 0:
-		var decay = focus_decay_rate * 2.0 * delta
+		var decay = effective_decay_rate * 2.0 * delta
 		bonus_focus -= decay
 		focus -= decay
 		if bonus_focus < 0:
 			bonus_focus = 0.0
 	else:
-		focus -= focus_decay_rate * delta
+		focus -= effective_decay_rate * delta
 
 	if focus <= 0.0:
 		focus = 0.0
@@ -164,25 +191,50 @@ func _update_label() -> void:
 	focus_label.text = str(int(focus)) + "%"
 
 func _show_wasted_sticker() -> void:
-	if wasted_sticker != null and is_instance_valid(wasted_sticker):
+	if not is_inside_tree():
 		return
+
+	# Reuse an existing node (saved in scene or previously hidden by editor preview toggle).
+	if wasted_sticker == null or not is_instance_valid(wasted_sticker):
+		var existing: Node = find_child("WastedSticker", false, false)
+		if existing is Sprite2D:
+			wasted_sticker = existing as Sprite2D
+
+	if wasted_sticker != null and is_instance_valid(wasted_sticker):
+		if not Engine.is_editor_hint():
+			var rng := RandomNumberGenerator.new()
+			rng.randomize()
+			var jitter := deg_to_rad(wasted_sticker_rotation_jitter_deg)
+			wasted_sticker.rotation = rng.randf_range(-jitter, jitter) if jitter > 0.0 else 0.0
+		wasted_sticker.show()
+		return
+
+	# Create a new sticker node.
 	wasted_sticker = Sprite2D.new()
 	wasted_sticker.texture = WASTED_STICKER
 	wasted_sticker.centered = true
 	wasted_sticker.z_index = 10
+	wasted_sticker.name = "WastedSticker"
 	add_child(wasted_sticker)
-	var rng := RandomNumberGenerator.new()
-	rng.randomize()
-	var jitter := deg_to_rad(wasted_sticker_rotation_jitter_deg)
-	wasted_sticker.rotation = rng.randf_range(-jitter, jitter) if jitter > 0.0 else 0.0
+	# Give it an owner so it appears in the Scene dock and is selectable in the 2D editor.
+	if Engine.is_editor_hint():
+		wasted_sticker.owner = get_tree().edited_scene_root
+		wasted_sticker.rotation = 0.0
+	else:
+		var rng := RandomNumberGenerator.new()
+		rng.randomize()
+		var jitter := deg_to_rad(wasted_sticker_rotation_jitter_deg)
+		wasted_sticker.rotation = rng.randf_range(-jitter, jitter) if jitter > 0.0 else 0.0
 	_update_wasted_sticker_transform()
 
 func _hide_wasted_sticker() -> void:
-	if wasted_sticker and is_instance_valid(wasted_sticker):
-		wasted_sticker.queue_free()
-	wasted_sticker = null
+	# Hide rather than free — keeps the node in the scene so the user's edits persist.
+	if wasted_sticker != null and is_instance_valid(wasted_sticker):
+		wasted_sticker.hide()
 
 func _update_wasted_sticker_transform() -> void:
+	if _syncing_from_node:
+		return
 	if wasted_sticker == null or not is_instance_valid(wasted_sticker):
 		return
 	wasted_sticker.position = Vector2(bar_width / 2.0, bar_height / 2.0) + wasted_sticker_offset

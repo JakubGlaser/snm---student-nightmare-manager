@@ -74,9 +74,16 @@ const ITEMS := [
 		"description": "Stop focus from dropping for a few seconds.",
 		"artifact": "A pixelated telegraph key shooting clean binary through a storm of static."
 	},
+	{
+		"id": "vitek_lecture_skip",
+		"theme": "Vítek",
+		"catchphrase": "Lecture? What lecture? We're done here.",
+		"description": "Skip immediately to the next level.",
+		"artifact": "A coffee-stained timetable with CANCELLED stamped across the whole week."
+	},
 ]
 
-@export var level_duration: float = 120.0 # 2 minutes in seconds
+@export var level_duration: float = 45.0 # seconds per level
 var current_time: float = 0.0
 
 @onready var progress_bar: ColorRect = $UI/ProgressPanel/ProgressBar
@@ -124,6 +131,10 @@ var current_joke_cooldown: float = 0.0
 var funfact_cooldown_label: Label
 var funfact_cooldown: float = 45.0
 var current_funfact_cooldown: float = 0.0
+
+var question_cooldown_label: Label
+var question_cooldown: float = 2.5
+var current_question_cooldown: float = 0.0
 
 # Special wheel state
 var special_used_this_level: bool = false
@@ -230,6 +241,17 @@ func _ready():
 	funfact_cooldown_label.set("theme_override_constants/outline_size", 10)
 	funfact_cooldown_label.text = ""
 	funfact_button.add_child(funfact_cooldown_label)
+
+	question_cooldown_label = Label.new()
+	question_cooldown_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	question_cooldown_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	question_cooldown_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	question_cooldown_label.set("theme_override_font_sizes/font_size", 40)
+	question_cooldown_label.set("theme_override_colors/font_color", Color.WHITE)
+	question_cooldown_label.set("theme_override_colors/font_outline_color", Color.BLACK)
+	question_cooldown_label.set("theme_override_constants/outline_size", 10)
+	question_cooldown_label.text = ""
+	question_button.add_child(question_cooldown_label)
 		
 	update_stamina_label()
 	_create_game_over_ui()
@@ -269,12 +291,12 @@ func _set_progress(p: float) -> void:
 		progress_bar.material.set_shader_parameter("progress", clampf(p, 0.0, 1.0))
 
 func _build_item_bubbles():
-	item_hover_bubble = _create_text_bubble(Vector2(650, 190), Vector2(245, 82), 15)
+	item_hover_bubble = _create_text_bubble(Vector2(640, 180), Vector2(305, 108), 15)
 	item_hover_bubble.visible = false
 	ui_layer.add_child(item_hover_bubble)
 	item_hover_label = item_hover_bubble.get_node("Text") as Label
-	
-	teacher_speech_bubble = _create_text_bubble(Vector2(365, 100), Vector2(390, 92), 20)
+
+	teacher_speech_bubble = _create_text_bubble(Vector2(355, 90), Vector2(435, 116), 20)
 	teacher_speech_bubble.visible = false
 	ui_layer.add_child(teacher_speech_bubble)
 	teacher_speech_label = teacher_speech_bubble.get_node("Text") as Label
@@ -302,10 +324,10 @@ func _create_text_bubble(pos: Vector2, bubble_size: Vector2, font_size: int) -> 
 	var label := Label.new()
 	label.name = "Text"
 	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	label.offset_left = 12
-	label.offset_top = 10
-	label.offset_right = -12
-	label.offset_bottom = -10
+	label.offset_left = 14
+	label.offset_top = 14
+	label.offset_right = -14
+	label.offset_bottom = -14
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -408,10 +430,11 @@ func _apply_item_effect(item_id: String) -> void:
 			for i in range(max_inventory_items):
 				_add_random_item_to_inventory()
 		"manuel_castells":
-			# Spread a focus boost across every living student.
+			# Spread a focus boost across every living student (scales with level).
+			var castells_heal = lerp(15.0, 28.0, get_difficulty01())
 			for student in students_node.get_children():
 				if student.has_method("modify_focus"):
-					student.modify_focus(15.0)
+					student.modify_focus(castells_heal)
 		"bolter_grusin":
 			# Remediation: replay the last item's effect (if any).
 			if last_item_effect_id != "":
@@ -426,6 +449,10 @@ func _apply_item_effect(item_id: String) -> void:
 			funfact_button.disabled = false
 			funfact_button.modulate = Color(1, 1, 1)
 			funfact_cooldown_label.text = ""
+			current_question_cooldown = 0.0
+			question_button.disabled = false
+			question_button.modulate = Color(1, 1, 1)
+			question_cooldown_label.text = ""
 			special_used_this_level = false
 			special_button.disabled = false
 			special_button.modulate = Color(1, 1, 1)
@@ -446,13 +473,15 @@ func _apply_item_effect(item_id: String) -> void:
 						lowest_focus = student.focus
 						lowest = student
 			if lowest != null:
-				lowest.set_focus_override(70.0)
+				lowest.set_focus_override(lerp(70.0, 85.0, get_difficulty01()))
 		"claude_shannon":
 			# Freeze all focus decay for a few seconds.
 			shannon_freeze_remaining = 6.0
 			for student in students_node.get_children():
 				if student.has_method("set_decay_paused"):
 					student.set_decay_paused(true)
+		"vitek_lecture_skip":
+			level_complete()
 
 func _show_teacher_speech(text: String, author: String = ""):
 	teacher_speech_token += 1
@@ -501,6 +530,15 @@ func _process(delta: float):
 			funfact_button.modulate = Color(1, 1, 1)
 			funfact_cooldown_label.text = ""
 
+	if current_question_cooldown > 0:
+		current_question_cooldown -= delta
+		question_cooldown_label.text = str(int(ceil(current_question_cooldown)))
+		if current_question_cooldown <= 0:
+			current_question_cooldown = 0
+			question_button.disabled = false
+			question_button.modulate = Color(1, 1, 1)
+			question_cooldown_label.text = ""
+
 	_process_item_abilities(delta)
 
 # Drives the time-based inventory item effects (Haraway, Fuller, Shannon).
@@ -512,10 +550,10 @@ func _process_item_abilities(delta: float) -> void:
 			haraway_remaining = 0.0
 			temp_action_multiplier = 0.0
 
-	# Fuller: drip focus back to everyone for a few seconds (~8 focus/sec).
+	# Fuller: drip focus back to everyone for a few seconds (8->13 focus/sec by level).
 	if fuller_regen_remaining > 0.0:
 		fuller_regen_remaining -= delta
-		var regen := 8.0 * delta
+		var regen: float = lerp(8.0, 13.0, get_difficulty01()) * delta
 		for student in students_node.get_children():
 			if student.has_method("modify_focus"):
 				student.modify_focus(regen)
@@ -605,6 +643,10 @@ func _set_audio_bus_mute(bus_name: String, muted: bool):
 		return
 	AudioServer.set_bus_mute(bus_index, muted)
 
+# Normalized difficulty: 0.0 at level 1, ramps to 1.0 at level 10 and plateaus.
+func get_difficulty01() -> float:
+	return clampf(float(current_level - 1) / 9.0, 0.0, 1.0)
+
 func start_new_level():
 	lvl_label.text = "lvl " + str(current_level)
 	_add_random_item_to_inventory()
@@ -626,11 +668,15 @@ func start_new_level():
 		josef_active = false
 		action_multiplier = 1.0
 	
-	# Base is 1.0 (Level 1). Maxes at 6.5 (Level 12).
-	# Math: 1.0 + (level - 1) * 0.5
-	var clamped_level = min(current_level, 12)
-	var new_decay_rate = 1.0 + ((clamped_level - 1) * 0.5)
-	
+	# Difficulty ramps from Level 1 (very easy) to Level 10, then plateaus.
+	var diff = get_difficulty01()
+	# Focus decay: 1.0/s at L1 -> 3.2/s at L10+.
+	var new_decay_rate = lerp(1.0, 3.2, diff)
+	# Action cooldowns tighten as levels climb.
+	joke_cooldown = lerp(30.0, 14.0, diff)
+	funfact_cooldown = lerp(45.0, 20.0, diff)
+	question_cooldown = lerp(2.5, 5.0, diff)
+
 	for student in students_node.get_children():
 		if student.has_method("reset_for_new_level"):
 			student.reset_for_new_level(new_decay_rate)
@@ -646,7 +692,11 @@ func level_complete():
 	# Clean up time-scale before transitioning
 	if cenek_active:
 		Engine.time_scale = 1.0
-	
+
+	# Bonus for clearing a level past 10 (where difficulty has plateaued).
+	if current_level > 10:
+		score += 1000.0
+
 	current_level += 1
 	current_time = 0.0
 	displayed_progress_time = 0.0
@@ -655,11 +705,18 @@ func level_complete():
 
 func _on_joke_button_pressed():
 	if _is_any_minigame_open() or current_joke_cooldown > 0: return
-	joke_minigame_panel.start_minigame()
+	joke_minigame_panel.start_minigame(get_difficulty01())
 
 func _on_question_button_pressed():
-	if _is_any_minigame_open(): return
+	if _is_any_minigame_open() or current_question_cooldown > 0: return
 	question_manager.start_question()
+
+# Called by QuestionManager when a question round wraps up; starts the cooldown.
+func on_question_completed():
+	current_question_cooldown = question_cooldown
+	question_button.disabled = true
+	question_button.modulate = Color(0.5, 0.5, 0.5)
+	question_cooldown_label.text = str(int(ceil(question_cooldown)))
 
 func _on_funfact_button_pressed():
 	if _is_any_minigame_open() or current_funfact_cooldown > 0: return
@@ -674,8 +731,9 @@ func _on_joke_minigame_finished(success: bool):
 	joke_button.disabled = true
 	joke_button.modulate = Color(0.5, 0.5, 0.5) # Darken while on cooldown
 	joke_cooldown_label.text = str(int(joke_cooldown))
-	
-	var base_effect = 20.0 if success else -10.0
+
+	var diff = get_difficulty01()
+	var base_effect = lerp(20.0, 26.0, diff) if success else lerp(-8.0, -16.0, diff)
 	var effect = base_effect * _consume_action_multiplier() if success else base_effect
 	for student in students_node.get_children():
 		if student.has_method("modify_focus"):
@@ -686,8 +744,9 @@ func _on_funfact_minigame_finished(success: bool):
 	funfact_button.disabled = true
 	funfact_button.modulate = Color(0.5, 0.5, 0.5)
 	funfact_cooldown_label.text = str(int(funfact_cooldown))
-	
-	var base_effect = 15.0 if success else -10.0
+
+	var diff = get_difficulty01()
+	var base_effect = lerp(15.0, 22.0, diff) if success else lerp(-8.0, -16.0, diff)
 	var effect = base_effect * _consume_action_multiplier() if success else base_effect
 	for student in students_node.get_children():
 		if student.has_method("modify_focus"):
@@ -736,6 +795,8 @@ func _on_wheel_finished(result_id: String):
 					student.modify_focus(-20.0)
 			# But everyone gets 120% at the start of the next level
 			dj_next_level_bonus = true
+		"vitek_lecture_skip":
+			level_complete()
 
 func _create_game_over_ui():
 	game_over_layer = CanvasLayer.new()
@@ -882,8 +943,26 @@ func _show_name_input() -> void:
 func _on_student_died():
 	alive_students -= 1
 	update_stamina_label()
+	_recompute_row_penalties()
 	if alive_students <= 0:
 		_trigger_game_over()
+
+# A student losing focus drags down their groupmates: living students gain a
+# small extra decay for each dead classmate in the same group. Groups match the
+# question zones (left=[0,1,2], center=[3,4,5], right=[6,7,8]), i.e. index / 3.
+# Idempotent full scan so it stays correct no matter the death order.
+func _recompute_row_penalties() -> void:
+	const PENALTY_PER_DEAD := 0.4
+	var students = students_node.get_children()
+	var dead_in_group := {0: 0, 1: 0, 2: 0}
+	for i in range(students.size()):
+		var s = students[i]
+		if not s.is_active:
+			dead_in_group[i / 3] += 1
+	for i in range(students.size()):
+		var s = students[i]
+		if s.is_active and s.has_method("set_row_decay_penalty"):
+			s.set_row_decay_penalty(dead_in_group[i / 3] * PENALTY_PER_DEAD)
 
 func update_stamina_label():
 	stamina_value_label.text = str(alive_students) + "/" + str(total_students)

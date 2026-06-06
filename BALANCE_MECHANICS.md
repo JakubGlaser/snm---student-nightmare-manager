@@ -6,13 +6,14 @@
 |---|---|---|---|
 | Level timer | Level trva `120 s`. Po dobehnuti zacne dalsi level. | Hlavni tlak hry: prezit do konce levelu s co nejvice aktivnimi studenty. | Neprimo zvysuje tlak, protoze studenti behem levelu prubezne ztraceji pozornost. |
 | Start noveho levelu | Pri startu hry a po dokonceni kazdeho levelu. | Resetuje levelove efekty, obnovi special ability a zvedne obtiznost pres decay. | Aktivnim studentum nastavi nahodnou pozornost `50-79 %`. |
-| Klesani pozornosti | Bezi kazdy frame u aktivnich studentu, pokud neni decay pozastaveny. | Zakladni fail pressure: student pri `0 %` vypadne a snizi pocet prezivajicich. | Level 1: `-1.0/s`; kazdy level `+0.5/s`; strop od levelu 12: `-6.5/s`. |
-| Bonusova pozornost | Pouziva se u otazky pres `add_bonus_focus`. | Bonus se chova jako docasny naskok, ktery mizi rychleji nez normalni pozornost. | Bonusova cast klesa dvojnasobne: `focus_decay_rate * 2`. Pozornost je capnuta na `100 %`. |
-| Smrt studenta | Student dosahne `0 %` pozornosti. | Student je neaktivni, dal nedostava efekty a zmensi se stamina counter. | Pozornost se nastavi na `0 %`; student uz se v dalsich levelech nerestartuje. |
-| Joke minigame | Tlacitko Joke, cooldown `30 s`; minihra pauzne strom. | Kratka skill check akce, level timer a decay stoji behem minihry. | Uspech: vsichni `+20 %` krat action multiplier. Fail: vsichni `-10 %`. |
-| Fun fact minigame | Tlacitko Fun Fact, cooldown `45 s`; minihra pauzne strom. | Vyber spravne zajimave hlasky, level timer a decay stoji behem minihry. | Uspech: vsichni `+15 %` krat action multiplier. Fail: vsichni `-10 %`. |
-| Question | Tlacitko Question, vyber leve / stredni / prave skupiny. | Nepauzuje cely level timer, ale zastavi decay vsem studentum po dobu vyberu a QTE. | Vybrana skupina dostane bonus `+30 %` krat action multiplier; bonusova cast potom klesa 2x rychleji. |
-| Question QTE | Po vyberu skupiny se nahodne zobrazuje pismeno na jednom studentovi ze skupiny. | QTE pokracuje, dokud hrac nesplete pismeno nebo nevyprsi cas. | Pri QTE je decay vsem pozastaveny; samotny QTE uspech uz dalsi pozornost nepridava. |
+| Klesani pozornosti | Bezi kazdy frame u aktivnich studentu, pokud neni decay pozastaveny. | Zakladni fail pressure: student pri `0 %` vypadne a snizi pocet prezivajicich. | Skaluje s levelem: `lerp(1.0, 3.2, t)` /s, kde `t = clamp((level-1)/9, 0, 1)`. Level 1: `-1.0/s`, od levelu 10 strop `-3.2/s`. |
+| Skupinovy debuff | Aktivuje se, kdyz student ve stejne skupine (question zona: left=[0,1,2], center=[3,4,5], right=[6,7,8], tj. `index / 3`) prijde o pozornost. | Smrt jednoho zaka mirne uspisi pad jeho spoluzaku ve stejne zone -> kaskadovy tlak. | Kazdy mrtvy spoluzak ve skupine pridava prezivsim `+0.4/s` decay (max `+0.8/s` pri dvou mrtvych). Drzi se i pres levely. |
+| Bonusova pozornost | Pouziva se u otazky pres `add_bonus_focus`. | Bonus se chova jako docasny naskok, ktery mizi rychleji nez normalni pozornost. | Bonusova cast klesa dvojnasobne: `efektivni decay * 2`. Pozornost je capnuta na `100 %`. |
+| Smrt studenta | Student dosahne `0 %` pozornosti. | Student je neaktivni, dal nedostava efekty a zmensi se stamina counter; prepocita se radovy debuff. | Pozornost se nastavi na `0 %`; student uz se v dalsich levelech nerestartuje. |
+| Joke minigame | Tlacitko Joke, cooldown `lerp(30, 14, t) s`; minihra pauzne strom. Sweet spot a rychlost kurzoru se s levelem zostruji. | Kratka skill check akce, level timer a decay stoji behem minihry. | Uspech: vsichni `lerp(20, 26, t) %` krat action multiplier. Fail: vsichni `lerp(-8, -16, t) %`. |
+| Fun fact minigame | Tlacitko Fun Fact, cooldown `lerp(45, 20, t) s`; minihra pauzne strom. | Vyber spravne zajimave hlasky, level timer a decay stoji behem minihry. | Uspech: vsichni `lerp(15, 22, t) %` krat action multiplier. Fail: vsichni `lerp(-8, -16, t) %`. |
+| Question | Tlacitko Question, vyber leve / stredni / prave skupiny. Cooldown `lerp(2.5, 5.0, t) s` po dokonceni. | Nepauzuje cely level timer, ale zastavi decay vsem studentum po dobu vyberu a QTE. | Vybrana skupina dostane bonus `lerp(30, 42, t) %` krat action multiplier; bonusova cast potom klesa 2x rychleji. |
+| Question QTE | Po vyberu skupiny se nahodne zobrazuje pismeno na jednom studentovi ze skupiny. | QTE pokracuje, dokud hrac nesplete pismeno nebo nevyprsi cas. Reakcni okno `lerp(2.2, 0.85, t) s`. | Pri QTE je decay vsem pozastaveny; samotny QTE uspech uz dalsi pozornost nepridava. |
 | Special wheel | 1x za level; minihra pauzne strom. | Jednorazovy silny zasah do levelu, po pouziti je special tlacitko vypnute do dalsiho levelu. | Efekt podle vysledku special ability. |
 | Sadluck AI slop | Vysledek special wheel. | Okamzita zachrana / velky reset aktualni situace. | Vsem aktivnim studentum nastavi pozornost na `120 %`. |
 | Josef's tobacco | Vysledek special wheel, trva do konce levelu. | Zesiluje pozitivni hracovy akce v aktualnim levelu. | Joke/Fun Fact uspechy a Question bonus se nasobi `2x`; negativni efekty se nenasobi. |
@@ -23,20 +24,32 @@
 
 ## Tabulka klesani pozornosti podle levelu
 
+Vzorec: `decay = lerp(1.0, 3.2, t)`, kde `t = clamp((level-1)/9, 0, 1)`. Od levelu 10 plato.
+
 | Level | Klesani pozornosti |
 |---|---:|
-| 1 | `-1.0/s` |
-| 2 | `-1.5/s` |
-| 3 | `-2.0/s` |
-| 4 | `-2.5/s` |
-| 5 | `-3.0/s` |
-| 6 | `-3.5/s` |
-| 7 | `-4.0/s` |
-| 8 | `-4.5/s` |
-| 9 | `-5.0/s` |
-| 10 | `-5.5/s` |
-| 11 | `-6.0/s` |
-| 12+ | `-6.5/s` |
+| 1 | `-1.00/s` |
+| 2 | `-1.24/s` |
+| 3 | `-1.49/s` |
+| 4 | `-1.73/s` |
+| 5 | `-1.98/s` |
+| 6 | `-2.22/s` |
+| 7 | `-2.47/s` |
+| 8 | `-2.71/s` |
+| 9 | `-2.96/s` |
+| 10+ | `-3.20/s` |
+
+S radovym debuffem muze efektivni decay byt az `+0.8/s` vyssi (dva mrtvi spoluzaci v rade).
+
+## Cooldowny akci podle levelu
+
+Vzorce pouzivaji stejne `t = clamp((level-1)/9, 0, 1)`.
+
+| Akce | Level 1 | Level 10+ |
+|---|---:|---:|
+| Joke | `30 s` | `14 s` |
+| Fun Fact | `45 s` | `20 s` |
+| Question | `2.5 s` | `5.0 s` |
 
 ## Itemy
 

@@ -44,6 +44,12 @@ const ABILITIES := [
 		"title": "DJ's failed calculation",
 		"description": "-20 focus now, but 120% next level!",
 		"color": Color(0.72, 0.40, 0.62)
+	},
+	{
+		"id": "vitek_lecture_skip",
+		"title": "Vítek's Lecture Skip",
+		"description": "Lecture skipped — next level NOW!",
+		"color": Color(0.82, 0.22, 0.22)
 	}
 ]
 

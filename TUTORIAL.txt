@@ -1,0 +1,157 @@
+==================================================
+  SNM – STUDENT NIGHTMARE MANAGER
+  Player Tutorial
+==================================================
+
+
+WHAT THE GAME IS ABOUT
+----------------------
+You are a teacher, and your one and only job is to keep your students paying
+attention. There are nine students in the classroom, and each of them has a focus
+meter ranging from 0% to 100%. The problem is that focus constantly drops –
+students get bored, stare out the window, scroll their phones. When a student's
+focus hits 0%, that student gives up and drops out of the game (a WASTED sticker
+appears). The game ends the moment every student has burned out.
+
+So your goal is to survive as long as possible, keep your students focused, and
+rack up the highest score you can. It sounds simple, but the further you get, the
+harder it becomes.
+
+
+PLAYING THROUGH THE GAME
+------------------------
+The game is split into levels. Each level lasts 45 seconds – at the top you can
+see a progress bar that gradually fills up. When the time runs out and you still
+have at least one student alive, you advance to the next level.
+
+The game ramps up with every level: student focus drops faster and your action
+cooldowns get shorter. Level 1 is a breeze – you only lose if you do nothing at
+all. Around level 6 you can no longer afford mistakes, and from level 8 onward it
+isn't enough to just "not mess up" – you have to use the right mechanics at the
+right time. From level 10 the difficulty plateaus (it stops getting worse), but
+it's tuned to demand nearly flawless play. On top of that, every level you clear
+past ten earns you a +1000 score bonus, so lasting as long as possible really
+pays off.
+
+Your score climbs steadily every second (and climbs faster in higher levels),
+plus it's boosted by the level-10+ bonuses mentioned above. When the game ends,
+your score is recorded on the leaderboard.
+
+
+HOW FOCUS DROPS
+---------------
+Every active student's focus drains continuously. Slowly in the first level, much
+faster in later ones. Your job is to keep topping it back up using your actions
+(see below).
+
+WATCH OUT for the "group effect": students are split into three groups (zones) –
+left, center, and right – the same as in the Question minigame. When one student
+in a group burns out, their classmates in the same zone start losing focus a
+little faster. And if two in a group burn out, it gets even worse. A single
+dropped student can drag down the whole zone – so it pays to put out fires early
+and never let anyone fall to zero.
+
+
+YOUR ACTIONS (BOTTOM BUTTONS)
+-----------------------------
+You have four main buttons. Three of them (Joke, Fun Fact, Question) restore
+focus, but they go on cooldown after use (you have to wait a bit before using them
+again). The cooldowns get shorter in higher levels so you can keep up.
+
+* JOKE – Starts a short minigame with a line sliding across a bar. The moment the
+  white line crosses the bright "sweet spot" zone, press SPACE. A hit = you add
+  focus to every student. A miss = you take a little focus from everyone. In
+  higher levels the line moves faster and the sweet spot is smaller, making it
+  harder.
+
+* FUN FACT – A similar action that, on success, raises focus for all students and,
+  on failure, takes a little from everyone. It has a longer cooldown than the Joke.
+
+* QUESTION – You pick one of the three student groups (left / center / right). The
+  chosen group immediately gets a focus bonus, and then a fast reaction game (QTE)
+  begins: letters appear on the students, and you have to press them on your
+  keyboard as fast as you can. As long as you hit the correct letters, the QTE
+  keeps going. If you press the wrong key or run out of time, the round ends. On
+  top of that, during the question all students' focus drain is temporarily paused.
+  In higher levels you get less time per letter, so you have to react quicker.
+
+* SPECIAL (Wheel of Luck) – See the next section.
+
+
+SPECIAL ABILITIES (WHEEL OF LUCK)
+---------------------------------
+When things get rough, you can "help yourself" with the superpowers of the SNM
+teachers. The SPECIAL button spins the Wheel of Luck – once per level. Press SPACE
+to stop the wheel, and depending on where it lands, you get one of these abilities:
+
+* Sadluck AI slop – Instantly sets EVERY student's focus to 120%. A great rescue
+  when the situation is critical.
+
+* Josef's tobacco – For the rest of the level, all your actions are 2x as effective
+  (bonuses from the Joke, Fun Fact, and Question are all doubled).
+
+* Cenek's endless speech – For the rest of the level, student focus stops dropping
+  entirely, but time runs 4x faster (the level flies by).
+
+* DJ's failed calculation – Risk and reward: it takes 20% focus from everyone right
+  now, but at the start of the next level everyone starts at 120%.
+
+* Vítek's Lecture Skip – Lecture cancelled! It instantly moves you to the next
+  level.
+
+The wheel is a one-time use per level, so think carefully about when to use it.
+
+
+ITEMS (INVENTORY)
+-----------------
+At the start of every level you get one random item added to your inventory, until
+it's full (max 5 items). When you hover an item with your mouse, its description
+appears. Clicking uses the item – this consumes it and frees up a slot. Each item
+is themed around a media theorist and has a different effect:
+
+* Marshall McLuhan – Your next Joke or Fun Fact counts double.
+
+* Lev Manovich – Throws away all your current items and draws you a fresh, full
+  set of new ones.
+
+* Manuel Castells – Gives a focus boost to every student at once.
+
+* Bolter-Grusin – Repeats the effect of the last item you used.
+
+* Friedrich Kittler – Instantly clears all your cooldowns (Joke, Fun Fact,
+  Question, and the Wheel of Luck are all available again right away).
+
+* Donna Haraway – For a few seconds, your actions hit harder (a temporary bonus to
+  their effect).
+
+* Matthew Fuller – Slowly refills focus for all students over several seconds.
+
+* Luciano Floridi – Rescues your weakest student and pulls them back up to a safe
+  level.
+
+* Claude Shannon – For a few seconds, completely stops focus from dropping for all
+  students.
+
+* Vítek – Instantly skips you ahead to the next level.
+
+
+MENU AND SETTINGS
+-----------------
+Clicking the meter in the classroom opens the menu, which pauses the game. From
+there you can resume the game, start a new game, check the tutorial or credits, or
+go back to the main menu. In the menu you can also toggle sound effects and music
+on or off. While the menu is open, student focus does not drop.
+
+
+A FEW TIPS TO FINISH
+--------------------
+* Don't let anyone fall to zero – one burned-out student speeds up the focus drop
+  for their whole group.
+* Keep an eye on your cooldowns and rotate your actions so you always have
+  something ready.
+* Save your strong items and the Wheel of Luck for crisis moments in higher levels.
+* The Question is great not only for its bonus but also because focus doesn't drop
+  during it.
+* The goal is to last as long as possible – every level past ten is +1000 score.
+
+Good luck, and may your students stay awake!

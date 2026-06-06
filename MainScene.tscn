@@ -26,13 +26,12 @@
 [ext_resource type="Texture2D" uid="uid://bpccvg78ye3vn" path="res://sprites/Music On Icon.png" id="27_music_on"]
 [ext_resource type="Texture2D" uid="uid://ce3f1236516cf" path="res://sprites/Audio Toggle Hitbox.png" id="29_audio_hitbox"]
 [ext_resource type="Shader" uid="uid://csnqnisp3bt8a" path="res://assets/shaders/progress_bar.gdshader" id="30_progshader"]
-[ext_resource type="Texture2D" uid="uid://b35aaphf6oafi" path="res://sprites/Minigame Panel.png" id="40_minipanel"]
-[ext_resource type="Texture2D" uid="uid://i80tvhg1tjnr" path="res://sprites/Minigame Option.png" id="41_minioption"]
-[ext_resource type="Texture2D" uid="uid://bjr78pxwxov4k" path="res://sprites/Minigame Option Selected.png" id="42_miniopt_sel"]
+[ext_resource type="Texture2D" uid="uid://cd1tkijp8xugm" path="res://sprites/Wasted.png" id="31_lppff"]
+[ext_resource type="Texture2D" uid="uid://biauwvi6ifuae" path="res://sprites/Chalkboard Frame.png" id="43_chalkframe"]
 [ext_resource type="FontFile" uid="uid://dv26f1y5gsi82" path="res://assets/fonts/Nunito-Regular.ttf" id="50_nunito"]
 [ext_resource type="Texture2D" uid="uid://bjwxyjcpppdy5" path="res://sprites/Menu Button.png" id="60_menubtn"]
 [ext_resource type="Texture2D" uid="uid://oycgt3006qwt" path="res://sprites/Menu Button Pressed.png" id="61_menubtn_pressed"]
-[ext_resource type="AudioStream" path="res://assets/sound/Do pozadí do gameplaye/SNM_Mulátor.mp3" id="99_game_music"]
+[ext_resource type="AudioStream" uid="uid://bcaupe8g01hi2" path="res://assets/sound/Do pozadí do gameplaye/SNM_Mulátor.mp3" id="99_game_music"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_progress"]
 shader = ExtResource("30_progshader")
@@ -61,16 +60,16 @@ base_font = ExtResource("50_nunito")
 variation_embolden = 0.6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joke_sweet_spot"]
-bg_color = Color(0, 0.86, 0.04, 0.88)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.27, 1, 0.2, 1)
-corner_radius_top_left = 9
-corner_radius_top_right = 9
-corner_radius_bottom_right = 9
-corner_radius_bottom_left = 9
+bg_color = Color(1, 1, 1, 0.52)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joke_cursor"]
 bg_color = Color(1, 1, 1, 1)
@@ -78,6 +77,21 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joke_bar_frame"]
+bg_color = Color(0.04, 0.15, 0.06, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.94, 0.78, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 4
+shadow_offset = Vector2(2, 4)
 
 [node name="MainScene" type="Node2D" unique_id=538928991]
 script = ExtResource("9_mains")
@@ -362,16 +376,18 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_special_panel")
 script = ExtResource("10_jokem")
 
-[node name="Background" type="TextureRect" parent="UI/JokeMinigamePanel" unique_id=1051637475]
+[node name="Background" type="NinePatchRect" parent="UI/JokeMinigamePanel" unique_id=1051637475]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("40_minipanel")
-expand_mode = 1
-stretch_mode = 5
+texture = ExtResource("43_chalkframe")
+patch_margin_left = 25
+patch_margin_top = 23
+patch_margin_right = 24
+patch_margin_bottom = 27
 
 [node name="InstructionLabel" type="Label" parent="UI/JokeMinigamePanel" unique_id=215579464]
 layout_mode = 1
@@ -382,16 +398,15 @@ offset_top = 78.0
 offset_right = -64.0
 offset_bottom = 136.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
-theme_override_constants/outline_size = 10
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 0
 theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 22
 text = "Press SPACE when the white line is in the green zone!"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BarFrame" type="TextureRect" parent="UI/JokeMinigamePanel" unique_id=1886667380]
+[node name="BarFrame" type="Panel" parent="UI/JokeMinigamePanel" unique_id=1886667380]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -404,9 +419,7 @@ offset_right = 330.0
 offset_bottom = 123.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("24_jokebar")
-expand_mode = 1
-stretch_mode = 5
+theme_override_styles/panel = SubResource("StyleBoxFlat_joke_bar_frame")
 
 [node name="BackgroundBar" type="ColorRect" parent="UI/JokeMinigamePanel" unique_id=1428366056]
 layout_mode = 1
@@ -490,16 +503,18 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_special_panel")
 script = ExtResource("13_funfm")
 
-[node name="Background" type="TextureRect" parent="UI/FunFactMinigamePanel" unique_id=2075869554]
+[node name="Background" type="NinePatchRect" parent="UI/FunFactMinigamePanel" unique_id=2075869554]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("40_minipanel")
-expand_mode = 1
-stretch_mode = 5
+texture = ExtResource("43_chalkframe")
+patch_margin_left = 25
+patch_margin_top = 23
+patch_margin_right = 24
+patch_margin_bottom = 27
 
 [node name="TitleLabel" type="Label" parent="UI/FunFactMinigamePanel" unique_id=42795547]
 layout_mode = 1
@@ -510,9 +525,8 @@ offset_top = 40.0
 offset_right = -70.0
 offset_bottom = 96.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
-theme_override_constants/outline_size = 10
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 0
 theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 34
 text = "Pick the most interesting fun fact!"
@@ -536,9 +550,6 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-texture_normal = ExtResource("41_minioption")
-texture_pressed = ExtResource("42_miniopt_sel")
-texture_hover = ExtResource("42_miniopt_sel")
 ignore_texture_size = true
 stretch_mode = 0
 
@@ -547,10 +558,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 52.0
-offset_top = 18.0
-offset_right = -52.0
-offset_bottom = -18.0
+offset_left = 24.0
+offset_top = 8.0
+offset_right = -24.0
+offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -567,9 +578,6 @@ autowrap_mode = 3
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-texture_normal = ExtResource("41_minioption")
-texture_pressed = ExtResource("42_miniopt_sel")
-texture_hover = ExtResource("42_miniopt_sel")
 ignore_texture_size = true
 stretch_mode = 0
 
@@ -578,10 +586,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 52.0
-offset_top = 18.0
-offset_right = -52.0
-offset_bottom = -18.0
+offset_left = 24.0
+offset_top = 8.0
+offset_right = -24.0
+offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -598,9 +606,6 @@ autowrap_mode = 3
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
-texture_normal = ExtResource("41_minioption")
-texture_pressed = ExtResource("42_miniopt_sel")
-texture_hover = ExtResource("42_miniopt_sel")
 ignore_texture_size = true
 stretch_mode = 0
 
@@ -609,10 +614,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 52.0
-offset_top = 18.0
-offset_right = -52.0
-offset_bottom = -18.0
+offset_left = 24.0
+offset_top = 8.0
+offset_right = -24.0
+offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -637,9 +642,8 @@ offset_right = -70.0
 offset_bottom = -38.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
-theme_override_constants/outline_size = 6
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 0
 theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
@@ -663,16 +667,18 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_special_panel")
 script = ExtResource("14_specw")
 
-[node name="Background" type="TextureRect" parent="UI/SpecialWheelPanel" unique_id=2134253116]
+[node name="Background" type="NinePatchRect" parent="UI/SpecialWheelPanel" unique_id=2134253116]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("40_minipanel")
-expand_mode = 1
-stretch_mode = 5
+texture = ExtResource("43_chalkframe")
+patch_margin_left = 25
+patch_margin_top = 23
+patch_margin_right = 24
+patch_margin_bottom = 27
 
 [node name="InstructionLabel" type="Label" parent="UI/SpecialWheelPanel" unique_id=1345737320]
 layout_mode = 1
@@ -683,9 +689,8 @@ offset_top = 40.0
 offset_right = -70.0
 offset_bottom = 96.0
 grow_horizontal = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
-theme_override_constants/outline_size = 10
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 0
 theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 36
 text = "Press SPACE to stop the wheel!"
@@ -704,9 +709,8 @@ offset_right = -70.0
 offset_bottom = -90.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
-theme_override_constants/outline_size = 8
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 0
 theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 22
 horizontal_alignment = 1
@@ -724,9 +728,8 @@ offset_right = -70.0
 offset_bottom = -42.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 0.94, 0.78, 1)
-theme_override_constants/outline_size = 6
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 0
 theme_override_fonts/font = SubResource("FontVariation_minigame_bold")
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
@@ -1011,75 +1014,119 @@ scale = Vector2(0.5, 0.5)
 [node name="Student1" type="Node2D" parent="Characters/Students" unique_id=1846185161]
 position = Vector2(788, 432)
 script = ExtResource("12_student")
-wasted_sticker_offset = null
-wasted_sticker_scale = null
-wasted_sticker_rotation_jitter_deg = null
-editor_preview_wasted = null
+wasted_sticker_offset = Vector2(-98.99999, -4)
+wasted_sticker_scale = 0.3
+editor_preview_wasted = true
+
+[node name="WastedSticker" type="Sprite2D" parent="Characters/Students/Student1" unique_id=1414369756]
+z_index = 10
+position = Vector2(-73.99999, 106)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("31_lppff")
 
 [node name="Student2" type="Node2D" parent="Characters/Students" unique_id=278711386]
 position = Vector2(590, 636)
 script = ExtResource("12_student")
-wasted_sticker_offset = null
-wasted_sticker_scale = null
-wasted_sticker_rotation_jitter_deg = null
-editor_preview_wasted = null
+wasted_sticker_offset = Vector2(-97, 0)
+wasted_sticker_scale = 0.3
+editor_preview_wasted = true
+
+[node name="WastedSticker" type="Sprite2D" parent="Characters/Students/Student2" unique_id=963843439]
+z_index = 10
+position = Vector2(-72, 110)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("31_lppff")
 
 [node name="Student3" type="Node2D" parent="Characters/Students" unique_id=865034165]
 position = Vector2(380, 874)
 script = ExtResource("12_student")
-wasted_sticker_offset = null
-wasted_sticker_scale = null
-wasted_sticker_rotation_jitter_deg = null
-editor_preview_wasted = null
+wasted_sticker_offset = Vector2(-103, -4)
+wasted_sticker_scale = 0.3
+editor_preview_wasted = true
+
+[node name="WastedSticker" type="Sprite2D" parent="Characters/Students/Student3" unique_id=48970154]
+z_index = 10
+position = Vector2(-78, 106)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("31_lppff")
 
 [node name="Student4" type="Node2D" parent="Characters/Students" unique_id=488921422]
 position = Vector2(1272, 498)
 script = ExtResource("12_student")
-wasted_sticker_offset = null
-wasted_sticker_scale = null
-wasted_sticker_rotation_jitter_deg = null
-editor_preview_wasted = null
+wasted_sticker_offset = Vector2(-65, -12)
+wasted_sticker_scale = 0.3
+editor_preview_wasted = true
+
+[node name="WastedSticker" type="Sprite2D" parent="Characters/Students/Student4" unique_id=1826381197]
+z_index = 10
+position = Vector2(-40, 98)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("31_lppff")
 
 [node name="Student5" type="Node2D" parent="Characters/Students" unique_id=652384350]
 position = Vector2(1022, 652)
 script = ExtResource("12_student")
-wasted_sticker_offset = null
-wasted_sticker_scale = null
-wasted_sticker_rotation_jitter_deg = null
-editor_preview_wasted = null
+wasted_sticker_offset = Vector2(89, 38)
+wasted_sticker_scale = 0.3
+editor_preview_wasted = true
+
+[node name="WastedSticker" type="Sprite2D" parent="Characters/Students/Student5" unique_id=1087626071]
+z_index = 10
+position = Vector2(114, 148)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("31_lppff")
 
 [node name="Student6" type="Node2D" parent="Characters/Students" unique_id=244854477]
 position = Vector2(1032, 916)
 script = ExtResource("12_student")
-wasted_sticker_offset = null
-wasted_sticker_scale = null
-wasted_sticker_rotation_jitter_deg = null
-editor_preview_wasted = null
+wasted_sticker_offset = Vector2(-105, 30)
+wasted_sticker_scale = 0.3
+editor_preview_wasted = true
+
+[node name="WastedSticker" type="Sprite2D" parent="Characters/Students/Student6" unique_id=592430961]
+z_index = 10
+position = Vector2(-80, 140)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("31_lppff")
 
 [node name="Student7" type="Node2D" parent="Characters/Students" unique_id=1000445286]
 position = Vector2(1598, 438)
 script = ExtResource("12_student")
-wasted_sticker_offset = null
-wasted_sticker_scale = null
-wasted_sticker_rotation_jitter_deg = null
-editor_preview_wasted = null
+wasted_sticker_offset = Vector2(111, 42)
+wasted_sticker_scale = 0.3
+editor_preview_wasted = true
+
+[node name="WastedSticker" type="Sprite2D" parent="Characters/Students/Student7" unique_id=602915406]
+z_index = 10
+position = Vector2(136, 152)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("31_lppff")
 
 [node name="Student8" type="Node2D" parent="Characters/Students" unique_id=1287793938]
 position = Vector2(1794, 700)
 script = ExtResource("12_student")
-wasted_sticker_offset = null
-wasted_sticker_scale = null
-wasted_sticker_rotation_jitter_deg = null
-editor_preview_wasted = null
+wasted_sticker_offset = Vector2(-87, 46)
+wasted_sticker_scale = 0.3
+editor_preview_wasted = true
+
+[node name="WastedSticker" type="Sprite2D" parent="Characters/Students/Student8" unique_id=1262167282]
+z_index = 10
+position = Vector2(-62, 156)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("31_lppff")
 
 [node name="Student9" type="Node2D" parent="Characters/Students" unique_id=132474642]
 position = Vector2(1656, 970)
 script = ExtResource("12_student")
-wasted_sticker_offset = null
-wasted_sticker_scale = null
-wasted_sticker_rotation_jitter_deg = null
+wasted_sticker_offset = Vector2(83, 62)
+wasted_sticker_scale = 0.3
+editor_preview_wasted = true
 
-[node name="GameMusic" type="AudioStreamPlayer" parent="."]
+[node name="WastedSticker" type="Sprite2D" parent="Characters/Students/Student9" unique_id=2099844741]
+z_index = 10
+position = Vector2(108, 172)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("31_lppff")
+
+[node name="GameMusic" type="AudioStreamPlayer" parent="." unique_id=1674452951]
 stream = ExtResource("99_game_music")
-bus = &"Music"
-editor_preview_wasted = null
