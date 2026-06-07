@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b64vxyq0b3cia"
-path="res://.godot/imported/Items SNM.png-81b74e5eaf773d514d1d99d734f980fb.ctex"
+uid="uid://45iatvdjh3s6"
+path="res://.godot/imported/credits.png-a3697a17ee41932830feff6034cd4394.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/Items SNM.png"
-dest_files=["res://.godot/imported/Items SNM.png-81b74e5eaf773d514d1d99d734f980fb.ctex"]
+source_file="res://sprites/menu/credits.png"
+dest_files=["res://.godot/imported/credits.png-a3697a17ee41932830feff6034cd4394.ctex"]
 
 [params]
 

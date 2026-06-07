@@ -64,8 +64,8 @@ again). The cooldowns get shorter in higher levels so you can keep up.
   higher levels the line moves faster and the sweet spot is smaller, making it
   harder.
 
-* FUN FACT – A similar action that, on success, raises focus for all students and,
-  on failure, takes a little from everyone. It has a longer cooldown than the Joke.
+* FUN FACT – You need to pick the funniest, on success, raises focus for all students and,
+  on failure, takes a little from everyone.
 
 * QUESTION – You pick one of the three student groups (left / center / right). The
   chosen group immediately gets a focus bonus, and then a fast reaction game (QTE)

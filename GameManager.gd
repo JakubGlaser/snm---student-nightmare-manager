@@ -11,6 +11,7 @@ extends Node
 
 const MAIN_SCENE := preload("res://MainScene.tscn")
 const MAIN_MENU := preload("res://MainMenu.tscn")
+const LOADING_SCREEN := preload("res://LoadingScreen.tscn")
 const UI_SFX := preload("res://assets/sound/Upravené/ES_Games, Video, Menu UI, Select, Notification 21 - Epidemic Sound.mp3")
 
 var music_enabled: bool = true
@@ -141,6 +142,8 @@ func build_leaderboard_overlay(close_text: String, on_close: Callable) -> Canvas
 
 var main_scene_instance: Node = null
 var main_menu_instance: Node = null
+var loading_screen_instance: Node = null
+var pending_main_scene: Node = null
 
 func _ready() -> void:
 	# Defer one frame so the SceneTree finishes wiring up Main.tscn before we
@@ -168,14 +171,44 @@ func show_menu() -> void:
 		main_menu_instance.refresh_continue_state()
 
 func start_new_game() -> void:
-	# Wipe any existing run, then spawn a fresh MainScene
+	# Wipe any existing run, then show the loading screen. It instantiates the
+	# fresh MainScene itself (the actual "loading" work, done in the
+	# background while the player reads tips) and hands off to it via
+	# enter_prepared_game() once they click through.
 	if main_scene_instance and is_instance_valid(main_scene_instance):
 		if main_scene_instance.is_inside_tree():
 			get_tree().root.remove_child(main_scene_instance)
 		main_scene_instance.queue_free()
 		main_scene_instance = null
+	if pending_main_scene and is_instance_valid(pending_main_scene):
+		pending_main_scene.queue_free()
+		pending_main_scene = null
 	_detach_menu()
-	main_scene_instance = MAIN_SCENE.instantiate()
+	loading_screen_instance = LOADING_SCREEN.instantiate()
+	get_tree().root.add_child(loading_screen_instance)
+
+# Instantiates the next MainScene off-screen (not added to the tree, so its
+# _ready never runs — no music, no game logic ticking) so the one real "loading"
+# cost — building the node tree from the preloaded PackedScene — happens while
+# the player is reading tips rather than as a hitch right when the game would
+# otherwise appear.
+func prepare_pending_main_scene() -> void:
+	if pending_main_scene and is_instance_valid(pending_main_scene):
+		pending_main_scene.queue_free()
+	pending_main_scene = MAIN_SCENE.instantiate()
+
+# Drops the prepared instance straight into the tree and tears the loading
+# screen down. Called by the loading screen once the player clicks through.
+func enter_prepared_game() -> void:
+	if pending_main_scene == null or not is_instance_valid(pending_main_scene):
+		prepare_pending_main_scene()
+	main_scene_instance = pending_main_scene
+	pending_main_scene = null
+	if loading_screen_instance and is_instance_valid(loading_screen_instance):
+		if loading_screen_instance.is_inside_tree():
+			get_tree().root.remove_child(loading_screen_instance)
+		loading_screen_instance.queue_free()
+		loading_screen_instance = null
 	get_tree().root.add_child(main_scene_instance)
 
 func resume_game() -> void:

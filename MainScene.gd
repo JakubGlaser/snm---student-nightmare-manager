@@ -112,6 +112,8 @@ var current_time: float = 0.0
 @onready var inventory_panel: TextureRect = $UI/InventoryPanel
 @onready var ui_layer: CanvasLayer = $UI
 @onready var game_music: AudioStreamPlayer = $GameMusic
+@onready var info_button: TextureButton = $UI/InfoButton
+@onready var tutorial = $Tutorial # Tutorial.gd (typed loosely: custom open()/closed)
 
 @onready var lvl_label: Label = $UI/ProgressPanel/LvlLabel
 
@@ -123,6 +125,9 @@ var sound_enabled: bool = true
 var music_enabled: bool = true
 var was_paused_before_menu: bool = false
 var bottom_button_disabled_states: Dictionary = {}
+# Remembers the pause state from before the tutorial was opened, so closing it
+# returns the player to exactly where they came from (paused menu or live game).
+var tutorial_prev_paused: bool = false
 
 var joke_cooldown_label: Label
 var joke_cooldown: float = 30.0
@@ -186,6 +191,8 @@ func _ready():
 	menu_main_menu_button.pressed.connect(_on_menu_main_menu_pressed)
 	sound_toggle_button.pressed.connect(_on_sound_toggle_pressed)
 	music_toggle_button.pressed.connect(_on_music_toggle_pressed)
+	info_button.pressed.connect(_open_tutorial)
+	tutorial.closed.connect(_on_tutorial_closed)
 	# Sync local flags from global state
 	music_enabled = Game.music_enabled
 	sound_enabled = Game.sound_enabled
@@ -591,7 +598,17 @@ func _on_menu_new_game_pressed():
 	get_tree().reload_current_scene()
 
 func _on_menu_tutorial_pressed():
-	print("Tutorial menu option selected. Tutorial screen can be connected here later.")
+	_open_tutorial()
+
+# Opens the tutorial overlay. Pauses the game while it's up and remembers the
+# previous pause state so closing returns the player exactly where they were.
+func _open_tutorial():
+	tutorial_prev_paused = get_tree().paused
+	get_tree().paused = true
+	tutorial.open()
+
+func _on_tutorial_closed():
+	get_tree().paused = tutorial_prev_paused
 
 func _on_menu_credits_pressed():
 	print("Credits menu option selected. Credits screen can be connected here later.")
@@ -670,8 +687,8 @@ func start_new_level():
 	
 	# Difficulty ramps from Level 1 (very easy) to Level 10, then plateaus.
 	var diff = get_difficulty01()
-	# Focus decay: 1.0/s at L1 -> 3.2/s at L10+.
-	var new_decay_rate = lerp(1.0, 3.2, diff)
+	# Focus decay: 1.6/s at L1 -> 4.6/s at L10+ (sped up across the board).
+	var new_decay_rate = lerp(1.6, 4.6, diff)
 	# Action cooldowns tighten as levels climb.
 	joke_cooldown = lerp(30.0, 14.0, diff)
 	funfact_cooldown = lerp(45.0, 20.0, diff)

@@ -15,10 +15,15 @@
 [ext_resource type="Texture2D" uid="uid://b42beuw1lxiwp" path="res://sprites/menu/Music Toggle Menu.png" id="13_music"]
 [ext_resource type="Texture2D" uid="uid://cbg5rmy6j5ulw" path="res://sprites/menu/Sound Toggle Menu.png" id="14_sound"]
 [ext_resource type="AudioStream" uid="uid://dmpwpvhobekwg" path="res://assets/sound/Hudba do meníčka/Out of Flux - What The Dog Doing - Creative Cut - Retro.mp3" id="15_menu_music"]
-[ext_resource type="Texture2D" path="res://sprites/menu/Leaderboard.png" id="16_lb"]
-[ext_resource type="Texture2D" path="res://sprites/menu/Leaderboard Pressed.png" id="17_lb_p"]
-[ext_resource type="Texture2D" path="res://assets/Menu/Nightmare/Nightmare_1.png" id="18_sub"]
-[ext_resource type="Texture2D" path="res://sprites/menu/Continue Disabled.png" id="19_cont_d"]
+[ext_resource type="Texture2D" uid="uid://eja704xek8di" path="res://sprites/menu/Leaderboard.png" id="16_lb"]
+[ext_resource type="Texture2D" uid="uid://cb134258wh6xy" path="res://sprites/menu/Leaderboard Pressed.png" id="17_lb_p"]
+[ext_resource type="Texture2D" uid="uid://drskigo7yaf4w" path="res://assets/Menu/Nightmare/Nightmare_1.png" id="18_sub"]
+[ext_resource type="Texture2D" uid="uid://chqre4i2jbawy" path="res://sprites/menu/Continue Disabled.png" id="19_cont_d"]
+[ext_resource type="Texture2D" uid="uid://ch3dx5rpca315" path="res://sprites/menu/openings_no_background.png" id="20_openings"]
+[ext_resource type="Texture2D" uid="uid://45iatvdjh3s6" path="res://sprites/menu/credits.png" id="21_credits"]
+[ext_resource type="Texture2D" uid="uid://djxwiiyyy4n0g" path="res://sprites/menu/info_button_no_bg.png" id="22_info"]
+[ext_resource type="PackedScene" uid="uid://bm6w7slnwgnuy" path="res://Tutorial.tscn" id="23_tutorial"]
+[ext_resource type="Texture2D" uid="uid://dtxvur4ukeqs8" path="res://sprites/menu/tutorial animace/Tutorial (1).PNG" id="24_tutanim"]
 
 [node name="MainMenu" type="Node2D" unique_id=145187678]
 script = ExtResource("1_menuscript")
@@ -42,7 +47,7 @@ texture = ExtResource("3_title")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Subtitle" type="TextureRect" parent="UI"]
+[node name="Subtitle" type="TextureRect" parent="UI" unique_id=1921810324]
 offset_left = 216.0
 offset_top = 160.0
 offset_right = 936.0
@@ -88,7 +93,7 @@ texture_hover = ExtResource("8_sett")
 ignore_texture_size = true
 stretch_mode = 0
 
-[node name="LeaderboardButton" type="TextureButton" parent="UI/Buttons"]
+[node name="LeaderboardButton" type="TextureButton" parent="UI/Buttons" unique_id=743799757]
 custom_minimum_size = Vector2(402, 66)
 layout_mode = 2
 texture_normal = ExtResource("16_lb")
@@ -137,10 +142,55 @@ stretch_mode = 5
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 texture_normal = ExtResource("14_sound")
-texture_hover = ExtResource("14_sound")
 texture_pressed = ExtResource("14_sound")
+texture_hover = ExtResource("14_sound")
 ignore_texture_size = true
+stretch_mode = 5
+
+[node name="OpeningsButton" type="TextureButton" parent="UI" unique_id=1597792968]
+offset_left = 939.0
+offset_top = 414.0
+offset_right = 1157.0
+offset_bottom = 557.0
+texture_normal = ExtResource("20_openings")
+texture_pressed = ExtResource("20_openings")
+texture_hover = ExtResource("20_openings")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="CreditsButton" type="TextureButton" parent="UI" unique_id=1547154427]
+offset_left = 943.0
+offset_top = 475.0
+offset_right = 1154.0
+offset_bottom = 616.0
+texture_normal = ExtResource("21_credits")
+texture_pressed = ExtResource("21_credits")
+texture_hover = ExtResource("21_credits")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="InfoButton" type="TextureButton" parent="UI" unique_id=392799185]
+offset_left = 60.0
+offset_top = 331.0
+offset_right = 124.0
+offset_bottom = 395.0
+texture_normal = ExtResource("22_info")
+texture_pressed = ExtResource("22_info")
+texture_hover = ExtResource("22_info")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="TutorialAnim" type="TextureRect" parent="UI" unique_id=1925903403]
+offset_left = -325.0
+offset_top = 176.0
+offset_right = 827.0
+offset_bottom = 824.0
+mouse_filter = 2
+texture = ExtResource("24_tutanim")
+expand_mode = 1
 stretch_mode = 5
 
 [node name="MenuMusic" type="AudioStreamPlayer" parent="." unique_id=392708086]
 stream = ExtResource("15_menu_music")
+
+[node name="Tutorial" parent="." unique_id=781160038 instance=ExtResource("23_tutorial")]

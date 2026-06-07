@@ -1,0 +1,151 @@
+[gd_scene format=3 uid="uid://b72iinxy6dr0u"]
+
+[ext_resource type="Script" uid="uid://wmhu4na7i7jm" path="res://LoadingScreen.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://dv26f1y5gsi82" path="res://assets/fonts/Nunito-Regular.ttf" id="3_font"]
+[ext_resource type="AudioStream" path="res://assets/sound/Loading Screen_SNM.mp3" id="4_music"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tip_panel"]
+bg_color = Color(0, 0, 0, 0.78039217)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="FontVariation" id="FontVariation_loading_bold"]
+base_font = ExtResource("3_font")
+variation_embolden = 0.6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_start_btn"]
+bg_color = Color(0.55, 0.78, 0.35, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.94, 0.78, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_start_btn_hover"]
+bg_color = Color(0.65, 0.88, 0.42, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.94, 0.78, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="LoadingScreen" type="Node2D" unique_id=1455934337]
+script = ExtResource("1_script")
+
+[node name="LoadingMusic" type="AudioStreamPlayer" parent="." unique_id=2847193605]
+stream = ExtResource("4_music")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=139003359]
+
+[node name="Backdrop" type="ColorRect" parent="UI" unique_id=2034981773]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Background" type="TextureRect" parent="UI" unique_id=1944280081]
+offset_right = 1148.0
+offset_bottom = 645.0
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Dim" type="ColorRect" parent="UI" unique_id=1188263957]
+offset_right = 1151.0
+offset_bottom = 652.0
+mouse_filter = 2
+color = Color(0.04, 0.025, 0.01, 0.62)
+
+[node name="TipPanel" type="Panel" parent="UI" unique_id=1830514017]
+offset_left = 583.0
+offset_top = 263.0
+offset_right = 1141.0
+offset_bottom = 540.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_tip_panel")
+
+[node name="TipHeader" type="Label" parent="UI/TipPanel" unique_id=1075718862]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = 776.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(1, 0.94, 0.78, 1)
+theme_override_fonts/font = SubResource("FontVariation_loading_bold")
+theme_override_font_sizes/font_size = 22
+text = "PRO TIP"
+
+[node name="TipLabel" type="Label" parent="UI/TipPanel" unique_id=1824646929]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 56.0
+offset_right = 550.0
+offset_bottom = 196.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Tip text goes here."
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Nav" type="HBoxContainer" parent="UI/TipPanel" unique_id=729716967]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 210.0
+offset_right = 776.0
+offset_bottom = 250.0
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="PrevButton" type="Button" parent="UI/TipPanel/Nav" unique_id=576094086]
+custom_minimum_size = Vector2(48, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "<"
+
+[node name="TipCounter" type="Label" parent="UI/TipPanel/Nav" unique_id=1162302275]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.94, 0.78, 1)
+theme_override_font_sizes/font_size = 18
+text = "1 / 10"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NextButton" type="Button" parent="UI/TipPanel/Nav" unique_id=378764596]
+custom_minimum_size = Vector2(48, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = ">"
+
+[node name="StartButton" type="Button" parent="UI" unique_id=1592617869]
+offset_left = 934.0
+offset_top = 579.0
+offset_right = 1134.0
+offset_bottom = 639.0
+theme_override_colors/font_color = Color(0.11, 0.055, 0.02, 1)
+theme_override_fonts/font = SubResource("FontVariation_loading_bold")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_start_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_start_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_start_btn_hover")
+disabled = true
+text = "▶ START"

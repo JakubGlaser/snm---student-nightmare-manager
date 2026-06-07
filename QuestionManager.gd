@@ -72,11 +72,6 @@ func start_question():
 	var diff = main_scene.get_difficulty01() if main_scene.has_method("get_difficulty01") else 0.0
 	max_qte_time = lerp(2.2, 0.85, diff)
 
-	# Pause ALL student decay
-	for student in students_node.get_children():
-		if student.has_method("set_decay_paused"):
-			student.set_decay_paused(true)
-
 	is_selecting = true
 	left_button.visible = true
 	center_button.visible = true
@@ -125,6 +120,13 @@ func _on_group_selected(group_name: String):
 
 func start_qte_loop():
 	is_qte_active = true
+
+	# Decay only pauses once the player has actually picked a group and the
+	# typing round begins — not while they're still choosing.
+	for student in students_node.get_children():
+		if student.has_method("set_decay_paused"):
+			student.set_decay_paused(true)
+
 	spawn_next_qte()
 
 func spawn_next_qte():

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b0f5nc1ndx1r3"
+path="res://.godot/imported/Loading Screen_SNM.mp3-20e6b11b1d9740b8ebe5159940337341.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/Loading Screen_SNM.mp3"
+dest_files=["res://.godot/imported/Loading Screen_SNM.mp3-20e6b11b1d9740b8ebe5159940337341.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

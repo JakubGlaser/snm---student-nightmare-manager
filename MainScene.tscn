@@ -21,7 +21,6 @@
 [ext_resource type="Texture2D" uid="uid://dqn35135mqm8o" path="res://sprites/Special Ability Panel.png" id="21_specialpanel"]
 [ext_resource type="Texture2D" uid="uid://brj301su3qn81" path="res://sprites/Special Ability Option.png" id="22_factoption"]
 [ext_resource type="Texture2D" uid="uid://cy0gcexasau28" path="res://sprites/Special Ability Option Selected.png" id="23_factoption_selected"]
-[ext_resource type="Texture2D" uid="uid://b20ombync7ixp" path="res://sprites/Joke Timing Bar.png" id="24_jokebar"]
 [ext_resource type="Texture2D" uid="uid://borkvfh0344a0" path="res://sprites/Sound On Icon.png" id="25_sound_on"]
 [ext_resource type="Texture2D" uid="uid://bpccvg78ye3vn" path="res://sprites/Music On Icon.png" id="27_music_on"]
 [ext_resource type="Texture2D" uid="uid://ce3f1236516cf" path="res://sprites/Audio Toggle Hitbox.png" id="29_audio_hitbox"]
@@ -31,6 +30,8 @@
 [ext_resource type="FontFile" uid="uid://dv26f1y5gsi82" path="res://assets/fonts/Nunito-Regular.ttf" id="50_nunito"]
 [ext_resource type="Texture2D" uid="uid://bjwxyjcpppdy5" path="res://sprites/Menu Button.png" id="60_menubtn"]
 [ext_resource type="Texture2D" uid="uid://oycgt3006qwt" path="res://sprites/Menu Button Pressed.png" id="61_menubtn_pressed"]
+[ext_resource type="Texture2D" uid="uid://djxwiiyyy4n0g" path="res://sprites/menu/info_button_no_bg.png" id="62_info"]
+[ext_resource type="PackedScene" uid="uid://bm6w7slnwgnuy" path="res://Tutorial.tscn" id="63_tutorial"]
 [ext_resource type="AudioStream" uid="uid://bcaupe8g01hi2" path="res://assets/sound/Do pozadí do gameplaye/SNM_Mulátor.mp3" id="99_game_music"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_progress"]
@@ -59,6 +60,21 @@ bg_color = Color(0, 0, 0, 0)
 base_font = ExtResource("50_nunito")
 variation_embolden = 0.6
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joke_bar_frame"]
+bg_color = Color(0.04, 0.15, 0.06, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 0.94, 0.78, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 4
+shadow_offset = Vector2(2, 4)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joke_sweet_spot"]
 bg_color = Color(1, 1, 1, 0.52)
 border_width_left = 2
@@ -77,21 +93,6 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joke_bar_frame"]
-bg_color = Color(0.04, 0.15, 0.06, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(1, 0.94, 0.78, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.45)
-shadow_size = 4
-shadow_offset = Vector2(2, 4)
 
 [node name="MainScene" type="Node2D" unique_id=538928991]
 script = ExtResource("9_mains")
@@ -735,6 +736,17 @@ theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="InfoButton" type="TextureButton" parent="UI" unique_id=399509111]
+offset_left = 216.0
+offset_top = 18.0
+offset_right = 280.0
+offset_bottom = 82.0
+texture_normal = ExtResource("62_info")
+texture_pressed = ExtResource("62_info")
+texture_hover = ExtResource("62_info")
+ignore_texture_size = true
+stretch_mode = 5
+
 [node name="MenuLayer" type="CanvasLayer" parent="." unique_id=1103051786]
 layer = 10
 
@@ -1130,3 +1142,5 @@ texture = ExtResource("31_lppff")
 
 [node name="GameMusic" type="AudioStreamPlayer" parent="." unique_id=1674452951]
 stream = ExtResource("99_game_music")
+
+[node name="Tutorial" parent="." unique_id=802593099 instance=ExtResource("63_tutorial")]
