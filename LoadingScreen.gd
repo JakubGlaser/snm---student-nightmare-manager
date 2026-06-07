@@ -28,10 +28,24 @@ var tips: Array[String] = [
 	"\"Burn in silicon hell you piece of ****, die on *********** you are f**** talking calculator, what do you think of yourself\" — random Dev to Claude",
 ]
 
-# One of the images in this folder is picked at random as the background each
-# time the loading screen appears (scanned at runtime so adding/removing art
-# doesn't require touching code).
-const BACKGROUND_DIR := "res://assets/loading screen/"
+# One of these images is picked at random as the background each time the
+# loading screen appears. They are listed explicitly (via preload) rather than
+# scanned from disk: runtime DirAccess scanning of res:// does NOT see imported
+# images in an exported build (only in the editor), which left the background
+# blank in Windows builds. preload guarantees they're packed and referenced.
+const BACKGROUNDS: Array[Texture2D] = [
+	preload("res://assets/loading screen/loading (1).png"),
+	preload("res://assets/loading screen/loading (2).png"),
+	preload("res://assets/loading screen/loading (3).png"),
+	preload("res://assets/loading screen/loading (4).png"),
+	preload("res://assets/loading screen/loading (5).png"),
+	preload("res://assets/loading screen/loading (6).png"),
+	preload("res://assets/loading screen/loading (7).png"),
+	preload("res://assets/loading screen/loading (8).png"),
+	preload("res://assets/loading screen/loading (9).png"),
+	preload("res://assets/loading screen/loading (10).png"),
+	preload("res://assets/loading screen/loading (11).png"),
+]
 
 var elapsed := 0.0
 var tip_elapsed := 0.0
@@ -96,20 +110,9 @@ func _reveal_start_button() -> void:
 	tw.tween_property(start_button, "modulate:a", 1.0, 0.5)
 
 func _pick_random_background() -> Texture2D:
-	var dir := DirAccess.open(BACKGROUND_DIR)
-	if dir == null:
+	if BACKGROUNDS.is_empty():
 		return null
-	var candidates: Array[String] = []
-	dir.list_dir_begin()
-	var file_name := dir.get_next()
-	while file_name != "":
-		if not dir.current_is_dir() and file_name.get_extension().to_lower() == "png":
-			candidates.append(BACKGROUND_DIR + file_name)
-		file_name = dir.get_next()
-	dir.list_dir_end()
-	if candidates.is_empty():
-		return null
-	return load(candidates[randi() % candidates.size()]) as Texture2D
+	return BACKGROUNDS[randi() % BACKGROUNDS.size()]
 
 func _refresh_tip() -> void:
 	tip_label.text = tips[tip_index]

@@ -1142,5 +1142,6 @@ texture = ExtResource("31_lppff")
 
 [node name="GameMusic" type="AudioStreamPlayer" parent="." unique_id=1674452951]
 stream = ExtResource("99_game_music")
+volume_db = -12.0
 
 [node name="Tutorial" parent="." unique_id=802593099 instance=ExtResource("63_tutorial")]

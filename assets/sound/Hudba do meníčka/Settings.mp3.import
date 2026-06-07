@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://s0itstuqsx71"
+path="res://.godot/imported/Settings.mp3-ecc0cd9d253b9f3ae1df2e10d678b48d.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/Hudba do meníčka/Settings.mp3"
+dest_files=["res://.godot/imported/Settings.mp3-ecc0cd9d253b9f3ae1df2e10d678b48d.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -10,3 +10,7 @@ sprites/_original_backup/
 *.kra
 *.kra~
 *-autosave.kra
+
+# Exported build artifacts (too large for GitHub; rebuild via Project > Export)
+*.exe
+*.pck

@@ -70,7 +70,7 @@ func start_question():
 
 	# Tighten the reaction window as difficulty climbs (2.2s at L1 -> 0.85s at L10+).
 	var diff = main_scene.get_difficulty01() if main_scene.has_method("get_difficulty01") else 0.0
-	max_qte_time = lerp(2.2, 0.85, diff)
+	max_qte_time = lerp(1.8, 0.7, diff)
 
 	is_selecting = true
 	left_button.visible = true

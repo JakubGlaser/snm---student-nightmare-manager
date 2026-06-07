@@ -7,6 +7,11 @@ const MUSIC_OFF_ICON := preload("res://sprites/Music Off Icon.png")
 const ITEM_SPRITE_SHEET := preload("res://sprites/Items SNM.png")
 const ITEM_ATLAS_COLUMNS := 3
 const ITEM_ATLAS_CELL_SIZE := Vector2(418, 418)
+
+# Gameplay SFX.
+const SFX_JOKE_SUCCESS := preload("res://assets/sound/smích.mp3")
+const SFX_JOKE_FAIL := preload("res://assets/sound/Unhappy.mp3")
+const SFX_NEW_LEVEL := preload("res://assets/sound/zvonek.mp3")
 # Inventory slots are now scene-driven: any TextureRect named "Slot*" directly
 # under InventoryPanel is picked up. Edit positions/sizes in the editor.
 var max_inventory_items: int = 5
@@ -660,12 +665,26 @@ func _set_audio_bus_mute(bus_name: String, muted: bool):
 		return
 	AudioServer.set_bus_mute(bus_index, muted)
 
+# Fire-and-forget one-shot sound effect on the SFX bus (respects the sound
+# toggle, since muting the SFX bus silences it). Frees itself when finished.
+func _play_sfx(stream: AudioStream) -> void:
+	if stream == null:
+		return
+	var sfx := AudioStreamPlayer.new()
+	sfx.stream = stream
+	sfx.bus = "SFX"
+	sfx.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(sfx)
+	sfx.finished.connect(sfx.queue_free)
+	sfx.play()
+
 # Normalized difficulty: 0.0 at level 1, ramps to 1.0 at level 10 and plateaus.
 func get_difficulty01() -> float:
 	return clampf(float(current_level - 1) / 9.0, 0.0, 1.0)
 
 func start_new_level():
 	lvl_label.text = "lvl " + str(current_level)
+	_play_sfx(SFX_NEW_LEVEL)
 	_add_random_item_to_inventory()
 	
 	# Reset special wheel state for the new level
@@ -692,7 +711,7 @@ func start_new_level():
 	# Action cooldowns tighten as levels climb.
 	joke_cooldown = lerp(30.0, 14.0, diff)
 	funfact_cooldown = lerp(45.0, 20.0, diff)
-	question_cooldown = lerp(2.5, 5.0, diff)
+	question_cooldown = lerp(3.5, 6.5, diff)
 
 	for student in students_node.get_children():
 		if student.has_method("reset_for_new_level"):
@@ -744,6 +763,7 @@ func _on_special_button_pressed():
 	special_wheel_panel.start_minigame()
 
 func _on_joke_minigame_finished(success: bool):
+	_play_sfx(SFX_JOKE_SUCCESS if success else SFX_JOKE_FAIL)
 	current_joke_cooldown = joke_cooldown
 	joke_button.disabled = true
 	joke_button.modulate = Color(0.5, 0.5, 0.5) # Darken while on cooldown
@@ -757,6 +777,7 @@ func _on_joke_minigame_finished(success: bool):
 			student.modify_focus(effect)
 
 func _on_funfact_minigame_finished(success: bool):
+	_play_sfx(SFX_JOKE_SUCCESS if success else SFX_JOKE_FAIL)
 	current_funfact_cooldown = funfact_cooldown
 	funfact_button.disabled = true
 	funfact_button.modulate = Color(0.5, 0.5, 0.5)

@@ -24,6 +24,11 @@
 [ext_resource type="Texture2D" uid="uid://djxwiiyyy4n0g" path="res://sprites/menu/info_button_no_bg.png" id="22_info"]
 [ext_resource type="PackedScene" uid="uid://bm6w7slnwgnuy" path="res://Tutorial.tscn" id="23_tutorial"]
 [ext_resource type="Texture2D" uid="uid://dtxvur4ukeqs8" path="res://sprites/menu/tutorial animace/Tutorial (1).PNG" id="24_tutanim"]
+[ext_resource type="Texture2D" uid="uid://cvvfnk71ty4uu" path="res://assets/Menu/gentleman_pruhledne_pozadi.png" id="25_gentleman"]
+[ext_resource type="AudioStream" uid="uid://s0itstuqsx71" path="res://assets/sound/Hudba do meníčka/Settings.mp3" id="26_settingssnd"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ig1gi"]
+load_path = "res://.godot/imported/openings_no_background.png-90c172c1e7e282fcf4127cf10a987f00.ctex"
 
 [node name="MainMenu" type="Node2D" unique_id=145187678]
 script = ExtResource("1_menuscript")
@@ -148,21 +153,21 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="OpeningsButton" type="TextureButton" parent="UI" unique_id=1597792968]
-offset_left = 939.0
-offset_top = 414.0
-offset_right = 1157.0
-offset_bottom = 557.0
+offset_left = 942.0
+offset_top = 473.0
+offset_right = 1160.0
+offset_bottom = 522.0
 texture_normal = ExtResource("20_openings")
 texture_pressed = ExtResource("20_openings")
-texture_hover = ExtResource("20_openings")
+texture_hover = SubResource("CompressedTexture2D_ig1gi")
 ignore_texture_size = true
 stretch_mode = 5
 
 [node name="CreditsButton" type="TextureButton" parent="UI" unique_id=1547154427]
-offset_left = 943.0
-offset_top = 475.0
-offset_right = 1154.0
-offset_bottom = 616.0
+offset_left = 973.0
+offset_top = 524.0
+offset_right = 1130.0
+offset_bottom = 569.0
 texture_normal = ExtResource("21_credits")
 texture_pressed = ExtResource("21_credits")
 texture_hover = ExtResource("21_credits")
@@ -190,7 +195,83 @@ texture = ExtResource("24_tutanim")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="CreditsVideo" type="VideoStreamPlayer" parent="UI" unique_id=1800860174]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand = true
+
+[node name="OpeningVideo" type="VideoStreamPlayer" parent="UI" unique_id=1006703632]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand = true
+
+[node name="SettingsScreen" type="ColorRect" parent="UI" unique_id=347259611]
+visible = false
+z_index = 200
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="GentlemanSticker" type="TextureRect" parent="UI/SettingsScreen" unique_id=2082013728]
+layout_mode = 0
+offset_left = 820.0
+offset_top = 360.0
+offset_right = 1060.0
+offset_bottom = 600.0
+mouse_filter = 2
+texture = ExtResource("25_gentleman")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="UI/SettingsScreen" unique_id=280741798]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 100.0
+offset_top = 80.0
+offset_right = -100.0
+offset_bottom = -80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 32
+text = "Do you genuinely believe we're going to make the settings menu? That's rather amusing. You're quite the comedian. Go and play this AI nonsense instead."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="CloseHint" type="Label" parent="UI/SettingsScreen" unique_id=136711891]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -56.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 18
+text = "(click anywhere to go back)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="MenuMusic" type="AudioStreamPlayer" parent="." unique_id=392708086]
 stream = ExtResource("15_menu_music")
+volume_db = -16.0
+
+[node name="SettingsSound" type="AudioStreamPlayer" parent="." unique_id=711201441]
+stream = ExtResource("26_settingssnd")
 
 [node name="Tutorial" parent="." unique_id=781160038 instance=ExtResource("23_tutorial")]
